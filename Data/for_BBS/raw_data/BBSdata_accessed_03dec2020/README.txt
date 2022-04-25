@@ -1,0 +1,1 @@
+for_BBS: data folder: place to keep 3 csv files: SpeciesList_edited.csv, routes.csv, weather.csv
