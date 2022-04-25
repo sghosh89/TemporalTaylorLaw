@@ -9,6 +9,21 @@ xweather<-read.csv("../../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/weath
 # it's a problem to read this text file: not in good format
 xsplist<-read.delim2("../../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt",
                      header=F,sep=" ")
+# read species list files
+x<-read.fwf(file = "../../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt",
+            widths = c(6, 
+                       7, 
+                       50, 51, 50, 
+                       19,51,57,65), 
+            strip.white = T)
+
+colnames(x)<-c("Seq",
+               "AOU",
+               "English_Common_Name","Freanch_Common_Name","Spanish_Common_Name",
+               "ORDER","Family","Genus","Species")
+x$ScientificName<-paste(x$Genus,x$Species,sep=" ")
+
+write.csv(x,"../../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.csv",row.names = F) 
 
 # no individual species level - only a summery info in States folder: though from 1966-
 # so, I am not going to use them
