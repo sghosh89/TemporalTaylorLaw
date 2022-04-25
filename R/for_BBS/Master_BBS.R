@@ -1,3 +1,6 @@
 path<-dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(path)
-source("data_wrangling.R") # wrangling data and find good routes
+
+# wrangling data, find good routes, get community matrix minimum for 20 years, 
+# species included sampled for atleast 70% of sampling period
+source("data_wrangling.R") 
