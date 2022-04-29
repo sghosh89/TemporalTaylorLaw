@@ -1,1 +1,1 @@
-for_BBS: data folder: place to keep 3 files: SpeciesList_edited.txt, routes.csv, weather.csv
+for_BBS: data folder: place to keep 4 files: SpeciesList_edited.txt, routes.csv, weather.csv, BBS_physiographic_strataname.csv
