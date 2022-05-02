@@ -7,4 +7,4 @@ for_RivFishTIME: data folder
 Each chosen TimeSeriesID is considered as a community. The selection criteria are:
 - at least 20 years of data found.
 - July-Dec are considered from each year to make consistent sampling effort.
-- >= 2 species present for atleast 70% of study period.
+- >= 15 species present for atleast 70% of study period.
