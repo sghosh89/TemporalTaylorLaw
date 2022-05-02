@@ -55,7 +55,7 @@ for(i in 1:nrow(uroutes)){
 # for each input year by species matrix
 
 source("compute_avg_cor.R") # minimum 5 species, minimum 5 years 
-# are required to estimate this metric, we are considering always >=20 years, 
+# are required to estimate this metric, we are considering always >=20 years, and >=15 species 
 # so it's okay for years
 for(i in 1:nrow(uroutes)){
   siteid<-uroutes$Country_State_Route[i]

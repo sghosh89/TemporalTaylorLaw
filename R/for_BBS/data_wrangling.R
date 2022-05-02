@@ -123,7 +123,7 @@ for (i in 1:length(fshort_list)){
   count_non0<-apply(y,MARGIN=2,FUN=function(x){sum(x!=0)})
   commonspmat<-y[,which(count_non0>=0.7*nrow(y))] # common sp present atleast 70% of sampling years
   
-  if(ncol(commonspmat)>=2){
+  if(ncol(commonspmat)>=15){ # atleast 15 species should be present at a site to consider
     rarespmat<-y[,which(count_non0<0.7*nrow(y))]
     if(ncol(rarespmat)>0){
       rarespmat<-as.matrix(rarespmat)
@@ -134,7 +134,7 @@ for (i in 1:length(fshort_list)){
     saveRDS(commonspmat,paste(resloc2,"input_mat_for_tailanal.RDS",sep=""))
   }else{
     badroutes<-c(badroutes,names(fshort_list)[i])
-    cat("-------- commonsp is less than 2 in ",names(fshort_list)[i]," ----------\n")
+    cat("-------- commonsp is less than 15 in ",names(fshort_list)[i]," ----------\n")
   }
 }
 uroutes<-setdiff(uroutes,badroutes)
