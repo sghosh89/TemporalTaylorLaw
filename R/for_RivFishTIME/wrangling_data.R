@@ -1,3 +1,7 @@
+#--------------------------------------------------------------------------------
+# We considered a community with at least 5 species that are sampled
+# for at least 70% of study period, where study period = minimum 20 years 
+#--------------------------------------------------------------------------------
 rm(list=ls())
 library(tidyverse)
 #----------------------------------------
@@ -88,7 +92,7 @@ for(i in 1:length(ts_ids)){
     cat("no raresp found at this site: ",ts_id,"\n")
   }
   
-  if(minsp>=2){ # atleast 2 species should be present at a site to consider
+  if(minsp>=5){ # atleast 5 species should be present at a site to consider
     saveRDS(commonsp_mat,paste(tsid_resloc,"commonspecies_timeseries.RDS",sep=""))
     metafile<-x20_q3q4%>%filter(TimeSeriesID==ts_id)
     saveRDS(metafile,paste(tsid_resloc,"metadata.RDS",sep=""))
