@@ -4,26 +4,27 @@ library(tidyverse)
 xxm<-readRDS("../../DATA/for_BioTIME/BioTIME_public_private_metadata.RDS")
 grid_freshw<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/bt_freshw_min20yr_rawdata.RDS")
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
-df<-df%>%filter(site==57)
+df<-df%>%filter(site==478)
 df$newsite<-df$site # this is the same as there is single site
 #----------- create result folder for wrangle ddata -------------------------
-resloc<-"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/57/"
+resloc<-"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/478/"
 if(!dir.exists(resloc)){
-    dir.create(resloc)
+  dir.create(resloc)
 }
-saveRDS(df,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/57/wrangledtable.RDS")
+saveRDS(df,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/478/wrangledtable.RDS")
+
 #================= filter data only for this site  =========================
 site<-df$site
 x<-grid_freshw%>%filter(STUDY_ID==site)
 # df ensures there is only one single site with each month sampling once in a given year
-unique(x$MONTH) # No month info available
+
 #==================== saving input spmat  ====================
 sort(unique(x$Species))
 
 # do not consider these unknown sp into analysis
 x<-x%>%filter(Species%notin%c("unspecifiable ","Unknown","Unknown rotifer", "Unknown rotifer2", "unknown ","Unknown "))
 
-x<-x%>%select(YEAR,Species,Value=Abundance)
+x<-x%>%dplyr::select(YEAR,Species,Value=Abundance)
 x<-x%>%group_by(Species,YEAR)%>%
   dplyr::summarise(Value=median(Value))%>%ungroup()
 
@@ -43,7 +44,7 @@ xmeta<-xxm%>%filter(STUDY_ID==site)
 input_sp<-list(spmat=xmat,meta=xmeta)
 saveRDS(input_sp,paste(resloc,"spmat.RDS",sep=""))
 
-#==================== saving input spmat for tailanal for 57 ====================
+#==================== saving input spmat for tailanal for 478 ====================
 m<-readRDS(paste(resloc,"spmat.RDS",sep=""))
 # first we aggregated the rare sp (present even less than 30% of sampled years) into a pseudo sp 
 presentyr<-apply(X=m$spmat,MARGIN=2,FUN=function(x){sum(x>0)})
@@ -75,25 +76,14 @@ if(!dir.exists(resloc2)){
 }
 df<-input_tailanal # dataframe with species timeseries along column
 
+#----------- analysis with covary sp ----------------
 resloc<-paste(resloc2,site,"/",sep="")
 if(!dir.exists(resloc)){
   dir.create(resloc)
 }
 
 res<-tail_analysis(mat = df, resloc = resloc, nbin = 2)
-saveRDS(site,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/57/newsite.RDS")
-
-
-
-
-
-
-
-
-
-
-
-
+saveRDS(site,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/478/newsite.RDS")
 
 
 
