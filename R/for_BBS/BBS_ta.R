@@ -64,6 +64,10 @@ for(i in 1:nrow(uroutes)){
   resloc_input<-paste("../../DATA/for_BBS/wrangled_data/",siteid,"/",sep="")
   df<-readRDS(paste(resloc_input,"input_mat_for_tailanal.RDS",sep="")) # dataframe with species timeseries along column
 
+  id<-which(colnames(df)=="raresp")
+  if(length(id)>0){
+    df<-df[,-id]
+  }
   res<-compute_avg_cor(mat=df)
   saveRDS(res,paste(resloc_output,"avg_cor_metric.RDS",sep=""))
   cat("---------- i= ",i," routeid=",siteid," ----------\n")
