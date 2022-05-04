@@ -8,7 +8,7 @@ grid_freshw<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
 df<-df%>%filter(site==253)
 # 7 sampling sites 
-
+sp_threshold<-15
 #df$newsite<-df$site # this is the same as there is single site
 #----------- create result folder for wrangle ddata -------------------------
 resloc<-"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/253/"
@@ -125,20 +125,37 @@ for(k in 1:length(newsite)){
     m1<-m$spmat
     input_tailanal<-m1
   }
+  #==================== check on species number ================
+  id<-which(colnames(input_tailanal)=="raresp")
+  if(length(id)>0){
+    input_tailanal<-input_tailanal[,-id]
+  }
+  nsp<-ncol(input_tailanal)
+  if(nsp>=sp_threshold){
+    input_tailanal<-input_tailanal
+  }else{
+    input_tailanal<-NA # community less than 15 sp will not be considered
+    newsite_bad<-c(newsite_bad,newsite[k])
+  }
+  
   saveRDS(input_tailanal,paste(resloc,"input_tailanal.RDS",sep=""))
+  #====================================================
   
-  #----------------- now do tail analysis ----------------------
-  resloc2<-paste("../../Results/for_BioTIME/Freshwater_plotlevel/",site,"/",sep="")
-  if(!dir.exists(resloc2)){
-    dir.create(resloc2)
+  if(nsp>=sp_threshold){
+    #----------------- now do tail analysis ----------------------
+    resloc2<-paste("../../Results/for_BioTIME/Freshwater_plotlevel/",site,"/",sep="")
+    if(!dir.exists(resloc2)){
+      dir.create(resloc2)
+    }
+    #----------- analysis ----------------
+    resloc<-paste(resloc2,newsite[k],"/",sep="")
+    if(!dir.exists(resloc)){
+      dir.create(resloc)
+    }
+    res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
+    
   }
-  
-  #----------- analysis with covary sp ----------------
-  resloc<-paste(resloc2,newsite[k],"/",sep="")
-  if(!dir.exists(resloc)){
-    dir.create(resloc)
-  }
-  res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
+  #---------------------------------------------
 }
 
 #--------------------------------------------------------

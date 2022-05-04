@@ -178,12 +178,3 @@ for(k in 1:length(newsite)){
   }
   res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
 }
-
-
-
-
-
-
-
-
-

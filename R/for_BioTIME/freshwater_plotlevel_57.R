@@ -6,6 +6,7 @@ grid_freshw<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
 df<-df%>%filter(site==57)
 df$newsite<-df$site # this is the same as there is single site
+sp_threshold<-15
 #----------- create result folder for wrangle ddata -------------------------
 resloc<-"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/57/"
 if(!dir.exists(resloc)){
@@ -64,6 +65,14 @@ if(length(rareid)!=0){
   m1<-m$spmat
   input_tailanal<-m1
 }
+
+id<-which(colnames(input_tailanal)=="raresp")
+if(length(id)>0){
+  input_tailanal<-input_tailanal[,-id]
+}
+nsp<-ncol(input_tailanal)
+nsp>=sp_threshold # check: this should be TRUE
+
 saveRDS(input_tailanal,paste(resloc,"input_tailanal.RDS",sep=""))
 
 #==================== now do tail analysis ====================
