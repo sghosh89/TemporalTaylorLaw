@@ -98,26 +98,22 @@ source("./freshwater_plotlevel_247.R")
 source("./freshwater_plotlevel_253.R")
 source("./freshwater_plotlevel_254.R")
 source("./freshwater_plotlevel_430.R") # each lat lon mostly visited once: aggregated by basin
-source("./freshwater_plotlevel_431.R") # each lat lon mostly visited once: aggregated by basin
+#source("./freshwater_plotlevel_431.R") # each lat lon mostly visited once: aggregated by basin
 source("./freshwater_plotlevel_478.R")
 
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
-
+# exclude 431 STUDY_ID as it has only 5 species
+df<-df%>%filter(site%notin%c("431"))
 #--------------- Do a summary stats for freshwater sites ------------------
+source("compute_avg_cor.R")
 summary_table<-c()
 for (i in c(1:length(df$site))){
   resloc<-paste("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/",df$site[i],"/",sep="")
   newsitelist<-readRDS(paste(resloc,"newsite.RDS",sep=""))
-   
-  if(length(newsitelist)==1){
-    tempo<-newsitelist==df$site[i]
-    if(tempo==T){
-      readpath<-resloc
-      resloc2<-paste("../../Results/for_BioTIME/Freshwater_plotlevel/",df$site[i],"/",sep="")
-    }else{
-      readpath<-paste(resloc,newsitelist,"/",sep="")
-      resloc2<-paste("../../Results/for_BioTIME/Freshwater_plotlevel/",df$site[i],"/",newsitelist,"/",sep="")
-    }
+  if(newsitelist==57 || newsitelist==478){
+    readpath<-resloc
+    resloc2<-paste("../../Results/for_BioTIME/Freshwater_plotlevel/",df$site[i],"/",sep="")
+  
     st<-readRDS(paste(resloc2,"summary_df.RDS",sep=""))
     st$STUDY_ID<-df$site[i]
     st$newsite<-newsitelist
@@ -158,7 +154,7 @@ for (i in c(1:length(df$site))){
   }
 }
 # reorganize
-summary_table<-summary_table%>%dplyr::select(STUDY_ID, newsite,initR,nsp,nint,nind,npos,nL,nU,nneg,L,U,
+summary_table<-summary_table%>%dplyr::select(STUDY_ID, newsite,initR,nsp,nyr,nint,nind,npos,nL,nU,nneg,L,U,
                                              avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp)
 
 saveRDS(summary_table,"../../Results/for_BioTIME/Freshwater_plotlevel/summary_table.RDS")
