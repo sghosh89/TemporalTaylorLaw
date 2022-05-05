@@ -17,7 +17,7 @@ tail_analysis<-function(mat, resloc, nbin=2){
   
   id<-which(colnames(mat)=="raresp")
   if(length(id)>0){
-    input_tailanal<-input_tailanal[,-id]
+    mat<-mat[,-id]
   }
   
   yrlist<-vector(mode="list",length=nrow(mat))
