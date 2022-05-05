@@ -52,7 +52,7 @@ vivj_matrix<-function(d_allyr,i,j,level=0.05,ploton){
   pval<-ct$p.value
   
   # should only return significant corval (either positive or negative)
-  
+  cat(" i, j = ",i,",",j,"\n")
   if(IndepTestRes<level && corval>0){ # for significant positive correlation
     corval<-corval
     if(ploton==T){

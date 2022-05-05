@@ -38,6 +38,7 @@ df$n_methods<-NA
 library(htmltools) 
 library(htmlwidgets)
 library(leaflet) 
+library(dplyr)
 
 for(i in 1:nrow(df)){
   dat<-grid_freshw%>%filter(STUDY_ID==site[i])
@@ -53,7 +54,7 @@ for(i in 1:nrow(df)){
   df$n_methods[i]<-list(unique(dat$SUMMARY_METHODS))
   
   #---------- save sampling sites on map ----------
-  dat<-dat%>%select(STUDY_ID,LATITUDE,LONGITUDE)%>%distinct()
+  dat<-dat%>%dplyr::select(STUDY_ID,LATITUDE,LONGITUDE)%>%distinct()
   
   sitemap<-leaflet(dat) %>% addTiles() %>%
     addMarkers(~LONGITUDE, ~LATITUDE, label = ~htmlEscape(STUDY_ID))
