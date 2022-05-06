@@ -8,7 +8,7 @@ xxm<-readRDS("../../DATA/for_BioTIME/BioTIME_public_private_metadata.RDS")
 grid_freshw<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/bt_freshw_min20yr_rawdata.RDS")
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
 df<-df%>%filter(site==430)
-
+sp_threshold<-15
 site<-df$site
 x<-grid_freshw%>%filter(STUDY_ID==site)
 x<-x%>%mutate(newsite=paste("STUDY_ID_",site,"_LAT",LATITUDE,"_LON",LONGITUDE,sep=""))
@@ -90,7 +90,7 @@ for(k in 1:length(newsite)){
 #--------------------------------------------------------------
 
 #------------ now format the data as per input format for tail analysis ------------
-
+badsite<-c()
 for(k in 1:length(newsite)){
   x<-x_agg%>%filter(newsite==newsite[k])
   
@@ -152,17 +152,21 @@ for(k in 1:length(newsite)){
   ncol(m$spmat)==length(rareid) # that means not all sp are rare
   
   if(length(rareid)!=0){
-    raresp<-m$spmat[,rareid]
-    raresp<-as.matrix(raresp) # this line is for when you have only one rare sp
-    raresp<-apply(X=raresp,MARGIN=1,FUN=sum)
     m1<-m$spmat[,-rareid]
-    m1<-cbind(m1,raresp=raresp)
     m1<-as.data.frame(m1)
     input_tailanal<-m1
   }else{
     m1<-m$spmat
     input_tailanal<-m1
   }
+  
+  # now check if nsp>=sp_threshold
+  if(ncol(input_tailanal)>=sp_threshold){
+    input_tailanal<-input_tailanal
+  }else{
+    input_tailanal<-NA
+  }
+  
   saveRDS(input_tailanal,paste(resloc,"input_tailanal.RDS",sep=""))
   
   #----------------- now do tail analysis ----------------------
@@ -171,10 +175,19 @@ for(k in 1:length(newsite)){
     dir.create(resloc2)
   }
   
-  #----------- analysis with covary sp ----------------
-  resloc<-paste(resloc2,newsite[k],"/",sep="")
-  if(!dir.exists(resloc)){
-    dir.create(resloc)
+  #----------- analysis ----------------
+  if(is.na(input_tailanal)==F){
+    resloc<-paste(resloc2,newsite[k],"/",sep="")
+    if(!dir.exists(resloc)){
+      dir.create(resloc)
+    }
+    res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
+  }else{
+    badsite<-c(badsite,newsite[k]) # this newsites does not contain 15 sp.
   }
-  res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
 }
+
+# none of plots we got with 15 sp.
+newsite<-setdiff(newsite,badsite)
+saveRDS(newsite,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/430/newsite.RDS")
+
