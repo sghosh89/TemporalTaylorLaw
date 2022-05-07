@@ -7,3 +7,11 @@ source("data_wrangling.R")
 
 # computing tail-dep. between rows for a community matrix (year by species) and summarized
 source("BBS_ta.R") 
+
+# estimate stability and TL slope, portfolio effects etc.
+source("stability_and_TL.R")
+
+
+
+
+
