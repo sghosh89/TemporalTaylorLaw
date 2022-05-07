@@ -5,3 +5,4 @@ setwd(path)
 source("get_BioTIME_data.R") # reading data
 source("freshwater_plotlevel.R") 
 source("terrestrial_plotlevel.R") 
+source("stability_and_TL.R")
