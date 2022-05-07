@@ -103,11 +103,13 @@ for(i in 1:nrow(summary_table)){
   summary_table$initR[i]<-ncol(bigM)
 }
 # reorganize
-summary_table<-summary_table%>%dplyr::select(siteid,initR,nsp,nyr,nint,nind,npos,nL,nU,nneg,L,U)
+summary_table<-summary_table%>%dplyr::select(siteid,initR,nsp,nyr,nint,nind,npos,nL,nU,nneg,L,U,
+                                             avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp)
 
 saveRDS(summary_table,"../../Results/for_RivFishTIME/summary_table.RDS")
 
-
+summary_table<-inner_join(summary_table,x_meta,by=c("siteid"="TimeSeriesID"))
+saveRDS(summary_table,"../../Results/for_RivFishTIME/summary_table_detail_version.RDS")
 
 
 
