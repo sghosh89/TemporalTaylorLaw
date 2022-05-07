@@ -44,7 +44,7 @@ for(i in 1:nrow(sm_insect)){
 sm_insect$source<-"InsectRoel"
 
 #reorganize
-sm_insect<-sm_insect%>%dplyr::select(c(STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
+sm_insect<-sm_insect%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
                                  initR,nsp, nind,npos,nL,nU,nneg,L,U,
                                  avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
