@@ -10,6 +10,7 @@ sm_RF<-readRDS("../../Results/for_RivFishTIME/summary_table_detail_version.RDS")
 
 sm_RF$cv_com<-NA
 sm_RF$stability<-NA
+sm_RF$vr_LdM<-NA
 sm_RF$TLintercept<-NA
 sm_RF$TLslope.z<-NA
 sm_RF$TLslope.z.lowCI<-NA
@@ -29,6 +30,7 @@ for(i in 1:nrow(sm_RF)){
   cv_com<-ecofolio::cv(tot_biomass)
   sm_RF$cv_com[i]<-cv_com
   sm_RF$stability[i]<- 1/cv_com
+  sm_RF$vr_LdM[i]<-ecofolio::synchrony(m)
   # now compute Taylor's slope
   res<-fit_taylor(x=m, ci = T, na.rm = F)
   sm_RF$TLintercept[i]<-res$c
@@ -50,7 +52,7 @@ sm_RF$source<-"RivFishTIME"
 
 #reorganize
 sm_RF<-sm_RF%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
-                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,
+                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,vr_LdM,
                                  avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                  TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
