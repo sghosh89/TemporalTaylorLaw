@@ -14,6 +14,7 @@ sm_swisslake_zoo$STUDY_ID<-c("lake hallwil","lake greifensee","lake baldegg")
 
 sm_swisslake_zoo$cv_com<-NA
 sm_swisslake_zoo$stability<-NA
+sm_swisslake_zoo$vr_LdM<-NA
 sm_swisslake_zoo$TLintercept<-NA
 sm_swisslake_zoo$TLslope.z<-NA
 sm_swisslake_zoo$TLslope.z.lowCI<-NA
@@ -33,6 +34,7 @@ for(i in 1:nrow(sm_swisslake_zoo)){
   cv_com<-ecofolio::cv(tot_biomass)
   sm_swisslake_zoo$cv_com[i]<-cv_com
   sm_swisslake_zoo$stability[i]<- 1/cv_com
+  sm_swisslake_zoo$vr_LdM[i]<-ecofolio::synchrony(m)
   # now compute Taylor's slope
   res<-fit_taylor(x=m, ci = T, na.rm = F)
   sm_swisslake_zoo$TLintercept[i]<-res$c
@@ -48,7 +50,7 @@ sm_swisslake_zoo$source<-"SwissLakeZoo"
 sm_swisslake_zoo$REALM<-"Freshwater"
 #reorganize
 sm_swisslake_zoo<-sm_swisslake_zoo%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
-                                                         initR,nsp, nind,npos,nL,nU,nneg,L,U,
+                                                         initR,nsp, nind,npos,nL,nU,nneg,L,U,vr_LdM,
                                                          avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                                          stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                                          TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
