@@ -10,6 +10,7 @@ sm_BBS<-readRDS("../../Results/for_BBS/summary_table_detail_version.RDS")
 
 sm_BBS$cv_com<-NA
 sm_BBS$stability<-NA
+sm_BBS$vr_LdM<-NA # variance ratio by LdM, synchrony metric in [0,1]
 sm_BBS$TLintercept<-NA
 sm_BBS$TLslope.z<-NA
 sm_BBS$TLslope.z.lowCI<-NA
@@ -30,6 +31,7 @@ for(i in 1:nrow(sm_BBS)){
   cv_com<-ecofolio::cv(tot_biomass)
   sm_BBS$cv_com[i]<-cv_com
   sm_BBS$stability[i]<- 1/cv_com
+  sm_BBS$vr_LdM[i]<-ecofolio::synchrony(m)
   # now compute Taylor's slope
   res<-fit_taylor(x=m, ci = T, na.rm = F)
   sm_BBS$TLintercept[i]<-res$c
@@ -51,7 +53,7 @@ sm_BBS$source<-"BBS"
 
 #reorganize
 sm_BBS<-sm_BBS%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
-                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,
+                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,vr_LdM,
                                  avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                  TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
