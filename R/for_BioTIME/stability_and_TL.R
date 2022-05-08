@@ -15,6 +15,7 @@ sm_BT<-inner_join(sm_BT,xxm,"STUDY_ID")
 
 sm_BT$cv_com<-NA
 sm_BT$stability<-NA
+sm_BT$vr_LdM<-NA # variance ratio by LdM, synchrony metric in [0,1]
 sm_BT$TLintercept<-NA
 sm_BT$TLslope.z<-NA
 sm_BT$TLslope.z.lowCI<-NA
@@ -42,6 +43,7 @@ for(i in 1:nrow(sm_BT)){
   cv_com<-ecofolio::cv(tot_biomass)
   sm_BT$cv_com[i]<-cv_com
   sm_BT$stability[i]<- 1/cv_com
+  sm_BT$vr_LdM[i]<-ecofolio::synchrony(m)
   # now compute Taylor's slope
   res<-fit_taylor(x=m, ci = T, na.rm = F)
   sm_BT$TLintercept[i]<-res$c
@@ -57,7 +59,7 @@ sm_BT$source<-"BioTIME"
 
 #reorganize
 sm_BT<-sm_BT%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
-                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,
+                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,vr_LdM,
                                  avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                  TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
