@@ -10,6 +10,7 @@ sm_insect<-readRDS("../../Results/for_insectRoel/summary_table_detail_version.RD
 
 sm_insect$cv_com<-NA
 sm_insect$stability<-NA
+sm_insect$vr_LdM<-NA
 sm_insect$TLintercept<-NA
 sm_insect$TLslope.z<-NA
 sm_insect$TLslope.z.lowCI<-NA
@@ -30,6 +31,7 @@ for(i in 1:nrow(sm_insect)){
   cv_com<-ecofolio::cv(tot_biomass)
   sm_insect$cv_com[i]<-cv_com
   sm_insect$stability[i]<- 1/cv_com
+  sm_insect$vr_LdM[i]<-ecofolio::synchrony(m)
   # now compute Taylor's slope
   res<-fit_taylor(x=m, ci = T, na.rm = F)
   sm_insect$TLintercept[i]<-res$c
@@ -45,7 +47,7 @@ sm_insect$source<-"InsectRoel"
 
 #reorganize
 sm_insect<-sm_insect%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
-                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,
+                                 initR,nsp, nind,npos,nL,nU,nneg,L,U,vr_LdM,
                                  avg_cor_btw_yr,avg_cor_pos_btw_sp,avg_cor_neg_btw_sp,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                  TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
