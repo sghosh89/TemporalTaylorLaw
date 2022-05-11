@@ -79,7 +79,7 @@ source("terrestrial_plotlevel_47.R") # no plots have >=15 sp.
 source("terrestrial_plotlevel_54.R") # no plots have >=15 sp.
 source("terrestrial_plotlevel_56.R") # no plots have >=15 sp.
 source("terrestrial_plotlevel_59.R") # no plots have >=15 sp.
-source("terrestrial_plotlevel_63.R") # dragonfly: lake ecosystem, still terrestrial?
+source("terrestrial_plotlevel_63.R") # no plots have>=15 spdragonfly: lake ecosystem, still terrestrial?
 source("terrestrial_plotlevel_67.R") # no plots have >=15 sp.
 #source("terrestrial_plotlevel_195.R") # STUDY_ID=195 is BBS data - so we excluded here
 source("terrestrial_plotlevel_214.R") # no plots have >=15 sp.

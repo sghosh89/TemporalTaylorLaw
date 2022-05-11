@@ -7,6 +7,7 @@ xxm<-readRDS("../../DATA/for_BioTIME/BioTIME_public_private_metadata.RDS")
 grid_terres<-readRDS("../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/bt_terres_min20yr_rawdata.RDS")
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/table_for_map.RDS")
 df<-df%>%filter(site==63)
+sp_threshold<-15
 # only one plot in this site, 29yrs, monthly freq = 1 (MONTH = NA)
 
 #----------- create result folder for wrangle ddata -------------------------
@@ -110,8 +111,9 @@ for(k in 1:length(newsite)){
   saveRDS(input_sp,paste(resloc,"spmat.RDS",sep=""))
   
   #----------- saving input spmat for tailanal ---------------------
-  m<-readRDS(paste(resloc,"spmat.RDS",sep=""))
-  # first we aggregated the rare sp (present even less than 30% of sampled years) into a pseudo sp 
+  m<-readRDS(paste(resloc,"spmat.RDS",sep="")) # only 5 sp present
+  
+    # first we aggregated the rare sp (present even less than 30% of sampled years) into a pseudo sp 
   presentyr<-apply(X=m$spmat,MARGIN=2,FUN=function(x){sum(x>0)})
   presentyr<-unname(presentyr)
   rareid<-which(presentyr<=0.3*nrow(m$spmat)) # rare sp = present less than 30% of sampled year
@@ -135,27 +137,33 @@ for(k in 1:length(newsite)){
       m1<-m$spmat
       input_tailanal<-m1
     }
+    
     saveRDS(input_tailanal,paste(resloc,"input_tailanal.RDS",sep=""))
     
-    #----------------- now do tail analysis ----------------------
-    resloc2<-paste("../../Results/for_BioTIME/Terrestrial_plotlevel/",site,"/",sep="")
-    if(!dir.exists(resloc2)){
-      dir.create(resloc2)
+    if(ncol(input_tailanal)>=sp_threshold){
+      #----------------- now do tail analysis ----------------------
+      resloc2<-paste("../../Results/for_BioTIME/Terrestrial_plotlevel/",site,"/",sep="")
+      if(!dir.exists(resloc2)){
+        dir.create(resloc2)
+      }
+      
+      #----------- analysis with covary sp ----------------
+      if(length(newsite)>1){
+        resloc<-paste(resloc2,newsite[k],"/",sep="")
+      }else{
+        resloc<-resloc2
+      }
+      
+      if(!dir.exists(resloc)){
+        dir.create(resloc)
+      }
+      res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
     }
-    
-    #----------- analysis with covary sp ----------------
-    if(length(newsite)>1){
-      resloc<-paste(resloc2,newsite[k],"/",sep="")
+    cat("---------- k = ",k,"-----------\n")
     }else{
-      resloc<-resloc2
+      input_tailanal<-NA # overwrite with NA
+      newsite_bad<-newsite
     }
-    
-    if(!dir.exists(resloc)){
-      dir.create(resloc)
-    }
-    res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
-  }
-  cat("---------- k = ",k,"-----------\n")
 }
 
 
