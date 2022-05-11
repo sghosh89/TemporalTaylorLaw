@@ -84,7 +84,9 @@ NonParamStat_matrixplot<-function(data,nyr,tot_target_sp,resloc,tl.cex,cl.cex,li
   mycorrplot(z=tempo,
              posnI_ind=posnI_ind,
              posnN_ind=posnN_ind,
-             colrange=c(0,cr),tl.cex=tl.cex,cl.cex=cl.cex)
+             colrange=c(-cr,cr),tl.cex=tl.cex,cl.cex=cl.cex) 
+  # theoretically should be 0 to cr range 
+  # but sometimes, you get slight negative correlation, if their are many ties
   dev.off()
   
   
@@ -109,7 +111,7 @@ NonParamStat_matrixplot<-function(data,nyr,tot_target_sp,resloc,tl.cex,cl.cex,li
   mycorrplot(z=tempo,
              posnI_ind=posnI_ind,
              posnN_ind=posnN_ind,
-             colrange=c(0,cr),tl.cex=tl.cex,cl.cex=cl.cex)
+             colrange=c(-cr,cr),tl.cex=tl.cex,cl.cex=cl.cex)
   dev.off()
   
   #--------------------------Corl-Coru plot---------------------------
