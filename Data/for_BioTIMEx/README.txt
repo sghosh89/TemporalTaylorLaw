@@ -1,1 +1,2 @@
-data folder for extended version of BioTIME
+data folder for extended version of BioTIMEx
+
