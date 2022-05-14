@@ -9,7 +9,7 @@ library(tidyverse)
 sp_threshold<-15
 #-------------------------------------------------------------
 # read files
-xmeta<-read_excel("../../Data/for_zoop_2014/LakeNameMasterand coords.xlsx")
+xmeta<-read_excel("../../DATA/for_zoop_2014/LakeNameMasterand coords.xlsx")
 colnames(xmeta)[5:6]<-c("lat","lon")
 
 listF <- list.files('../../DATA/for_zoop_2014/Zoop Data/', pattern = ".csv", full.names = TRUE)
