@@ -53,17 +53,18 @@ ggplot(df, aes(x = net_taildep/nint, y = TLslope.z,
 ggplot(df, aes(x = net_taildep/nint, y = TLslope.z,
                color=REALM, group=REALM)) + 
   geom_point(alpha=0.3,col=as.factor(df$nsp)) + 
-  geom_smooth(method="lm",se=T)+#facet_grid(vars(REALM))+
+  geom_smooth(method="lm",se=T, aes(fill=REALM))+#facet_grid(vars(REALM))+
   #scale_color_gradient(low = "white", high = "red")+
   scale_color_manual(values=c("skyblue","green"))+
+  scale_fill_manual(values=c("skyblue","darkolivegreen2"))+
   theme_classic()#+theme(legend.position = "none")
 
 # considering all point
-ggplot(df, aes(x = rank_td, y = TLslope.z
+ggplot(df, aes(x = net_taildep/nint, y = TLslope.z
                )) + 
   geom_point(alpha=0.3,col=as.factor(df$nsp)) + 
-  geom_smooth(method="lm",se=T,col="red")+#facet_grid(vars(REALM))+
-  theme_classic()#+theme(legend.position = "none")
+  geom_smooth(method="lm",se=T,col="red",aes(fill="red"))+#facet_grid(vars(REALM))+
+  theme_classic()+theme(legend.position = "none")
 
 
 ############### EXTRA PLOT ###########################
