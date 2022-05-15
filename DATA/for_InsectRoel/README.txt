@@ -5,7 +5,7 @@ data folder contains:
 
 # How did we clean the data?
 
-- atleast 20 year long time series, >=2 species those present at least 70% of 
+- atleast 20 year long time series, >=15 species those present at least 70% of 
   total study period were considered for each community. Plots were nested within each STUDY_ID.
 - mostly specification level is 'species' but when it is not then aggregated to 
   most commonly specified level: genus, family, subfamily.
