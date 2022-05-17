@@ -21,7 +21,7 @@ marg_to_cop_trans<-function(x){ #transforms to copula space
 
 #***constants
 N<-26 #length of time series
-n<-30 #number of sp
+n<-40 #number of sp
 numdat<-1000 #the number of datasets to get from the normal copula
 
 

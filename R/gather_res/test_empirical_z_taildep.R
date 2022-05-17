@@ -1,9 +1,5 @@
 rm(list=ls()) 
 library(tidyverse)
-#======================
-if(!dir.exists("../../Results/gather_res/res_test_empirical_z_taildep/")){
-  dir.create("../../Results/gather_res/res_test_empirical_z_taildep/")
-}
 #==========================
 sm_all<-readRDS("../../Results/gather_res/TaylorEstimate_alldata.RDS")
 sm_all$net_taildep<-sm_all$L+sm_all$U
@@ -65,6 +61,19 @@ ggplot(df, aes(x = net_taildep/nint, y = TLslope.z
   geom_point(alpha=0.3,col=as.factor(df$nsp)) + 
   geom_smooth(method="lm",se=T,col="red",aes(fill="red"))+#facet_grid(vars(REALM))+
   theme_classic()+theme(legend.position = "none")
+
+# make plot for z vs. net_taildep/nint for different range of species
+df$bins<-cut(df$nsp, breaks=c(14,20,25,30,35,45)) # make range 
+df0<-df%>%select(nsp,avg_cor_btw_yr,nyr,TLslope.z,REALM,bins)
+tbl<-df0%>%group_by(bins)%>%summarise(avg_z=mean(TLslope.z))%>%ungroup()
+tbl
+plot(tbl$bins,tbl$avg_z)
+ggplot(df0, aes(x=bins, y=TLslope.z, col=factor(bins),alpha=0.3)) + 
+  geom_point() +
+  geom_point(data=tbl, aes(x=bins, y=avg_z), color='black', cex=3, pch=15)+
+  xlab("Richness")+
+  theme_classic()+theme(legend.position = "none")
+
 
 
 ############### EXTRA PLOT ###########################
