@@ -63,8 +63,9 @@ ggplot(df, aes(x = net_taildep/nint, y = TLslope.z
   theme_classic()+theme(legend.position = "none")
 
 # make plot for z vs. net_taildep/nint for different range of species
+df$td_scl<-df$net_taildep/df$nint
 df$bins<-cut(df$nsp, breaks=c(14,20,25,30,35,45)) # make range 
-df0<-df%>%select(nsp,avg_cor_btw_yr,nyr,TLslope.z,REALM,bins)
+df0<-df%>%select(nsp,td_scl,avg_cor_btw_yr,nyr,TLslope.z,REALM,bins)
 tbl<-df0%>%group_by(bins)%>%summarise(avg_z=mean(TLslope.z))%>%ungroup()
 tbl
 plot(tbl$bins,tbl$avg_z)
@@ -74,6 +75,23 @@ ggplot(df0, aes(x=bins, y=TLslope.z, col=factor(bins),alpha=0.3)) +
   xlab("Richness")+
   theme_classic()+theme(legend.position = "none")
 
+# now make a plot: net_taildep/nint for species category
+tbl<-df0%>%group_by(bins)%>%summarise(avg_ntd=mean(td_scl))%>%ungroup()
+ggplot(df0, aes(x=bins, y=td_scl, col=factor(bins),alpha=0.3)) + 
+  geom_point() +
+  geom_point(data=tbl, aes(x=bins, y=avg_ntd), color='black', cex=3, pch=15)+
+  xlab("Richness")+
+  theme_classic()+theme(legend.position = "none")
+
+library(PupillometryR)
+ggplot(data = df0, aes(y = td_scl, x = bins))+
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .4) + 
+  #coord_flip()+
+  geom_point(aes(y = td_scl,color=REALM), position = position_jitter(width = .05), size = 0.9, alpha = 0.4) +
+  geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.4)+ 
+  scale_color_manual(values=alpha(c("blue","green3"), 1))+
+  ylab("net_taildep/nint")+xlab("Richness")+
+  theme_classic()
 
 
 ############### EXTRA PLOT ###########################
