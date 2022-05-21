@@ -93,6 +93,20 @@ ggplot(data = df0, aes(y = td_scl, x = bins))+
   ylab("net_taildep/nint")+xlab("Richness")+
   theme_classic()
 
+# now with species number
+ggplot(data = df, aes(y = td_scl, x = nsp, col=REALM))+
+  geom_point(position = position_jitter(width = 0),size = 0.9, alpha = 0.4)+
+  scale_color_manual(values=alpha(c("blue","green3"), 1))+
+  ylab("net_taildep/nint")+xlab("Richness")+
+  geom_smooth(method="lm",se=F)+
+  theme_classic()
+
+ggplot(data = df, aes(y = td_scl, x = nsp))+
+  geom_point(position = position_jitter(width = 0),size = 0.9, alpha = 0.4)+
+  ylab("net_taildep/nint")+xlab("Richness")+
+  geom_smooth(method="lm",se=F,col="black")+
+  theme_classic()
+
 
 ############### EXTRA PLOT ###########################
 # now plot z vs. rho for both realm with error bar
