@@ -22,7 +22,8 @@ tail_analysis<-function(mat, resloc, nbin=2){
   
   yrlist<-vector(mode="list",length=nrow(mat))
   names(yrlist)<-rownames(mat)
-  
+  mat<-as.data.frame(mat)# make sure to get a dataframe, otherwise in the 
+  #next for loop Dat would be numeric and can't transpose
   for(i in 1:length(yrlist)){
     Dat<-mat[i,]
     Dat<-t(Dat)

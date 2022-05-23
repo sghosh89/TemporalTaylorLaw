@@ -15,6 +15,11 @@ source("NonParamStat_matrixplot.R")
 
 tail_analysis<-function(mat, resloc, nbin=2){
   
+  id<-which(colnames(mat)=="raresp")
+  if(length(id)>0){
+    mat<-mat[,-id]
+  }
+  
   yrlist<-vector(mode="list",length=nrow(mat))
   names(yrlist)<-rownames(mat)
   mat<-as.data.frame(mat)# make sure to get a dataframe, otherwise in the 
