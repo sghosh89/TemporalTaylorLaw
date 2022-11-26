@@ -19,3 +19,9 @@ source("Simulation_zmorethan2.R") # new mechanism for z>2
 source("test_empirical_z_taildep.R") # test with real data
 
 source("synchrony_and_z.R")
+
+source("conceptual_fig1.R")
+
+
+
+
