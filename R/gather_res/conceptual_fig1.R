@@ -94,7 +94,7 @@ g2<-ggplot(data=res, aes(x=nsp,y=icv,col=z))+geom_point()+
 
 # plot PE vs z for different richness
 gPE<-ggplot(data=res, aes(x=z,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)+
-  xlab("Taylor's law slope, z")+ylab("Portfolio effect")+
+  xlab("Taylor's law slope, z")+ylab("Portfolio effect, PE")+
  geom_vline(xintercept = 2, linetype="dotted", col="gray")+
   theme_bw()+
   geom_smooth(aes(y=pe.mv),linetype = "dashed",se=F)+
@@ -103,8 +103,8 @@ gPE<-ggplot(data=res, aes(x=z,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)
         legend.position="none",
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
-annotate(geom="text",x=1.5, y=40, label="Solid: avg Cv based,\n
-         Dashed: mean-variance scaling", size=3.5)
+annotate(geom="text",x=1.5, y=40, label="Solid: PE for avg Cv based,\n
+         Dashed: PE for mean-variance scaling", size=3)
 #gPE
 
 # plot community abundance timeseries for z=1
@@ -198,7 +198,7 @@ gTL<-ggplot(data=dfz1,aes(x=m,y=v))+geom_point(col="gray",pch=1,size=2.8)+
   annotate("text", x = totmz3, y = totvz3, 
            parse = T, label = "X", col="magenta")
 
-gTL
+#gTL
 
 pdf("../../Results/Prelim_res_plot/conceptual_fig1.pdf", width = 12, height = 6)
 grid.arrange(gz1, gTL, gz3, g1, gPE,nrow = 2, 

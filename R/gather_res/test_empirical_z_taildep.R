@@ -14,109 +14,113 @@ ggplot() +
   ylab("Density")+scale_fill_manual(values=c("skyblue","green"))+
   theme_classic()
 
-# So, I choose range 15 to 45 (until the vertical line), avg nsp=30
-
-library(RColorBrewer)
-nsplist<-c(15:45)
-df<-sm_all%>%filter(nsp%in%nsplist)
-table(df$REALM)
-range(df$avg_cor_btw_yr) #0.4354706 0.8989881
-ggplot() + 
-  geom_density(data=df, aes(x=avg_cor_btw_yr, group=REALM, fill=REALM),alpha=0.5, adjust=2) + 
-  xlab("rho") +geom_vline(xintercept=0.5)+
-  ylab("Density")+scale_fill_manual(values=c("skyblue","green"))+
-  theme_classic()
+# richness distribution
 
 
-#df<-df%>%filter(avg_cor_btw_yr>=0.5)
-#df_T<-df%>%filter(REALM=="Freshwater")
+dens <- density(sm_all$nsp)
+df <- data.frame(x=dens$x, y=dens$y)
+q<-quantile(sm_all$nsp,c(0.25,0.75))
+q
+range(sm_all$nsp)
+df$quant <- factor(findInterval(df$x,q))
+gR<-ggplot(df, aes(x,y)) + geom_line() + geom_ribbon(aes(ymin=0, ymax=y, fill=quant)) + 
+  scale_x_continuous(breaks=q) + scale_fill_manual(values=c("cyan","lightsteelblue1","dodgerblue"))+ 
+  xlab("Richness, R")+ 
+  ylab("Density")+
+  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),legend.position="none",
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
+  annotate(geom="label",x=0, y=0.05, label="R = [15,28]", size=3, vjust=1, hjust=0, fill="cyan")+
+  annotate(geom="label",x=30, y=0.05, label="R = [29,51]", size=3, vjust=1, hjust=0,fill="lightsteelblue1")+
+annotate(geom="label",x=60, y=0.05, label="R = [52,89]", size=3, vjust=1, hjust=0,fill="dodgerblue")+
+  annotate(geom="text",x=40, y=0.03, label="n = 1722 communities", size=4, vjust=1, hjust=0)
 
-#range(df$avg_cor_btw_yr) #0.5241136 0.8989881
+gRho<-ggplot() + 
+    geom_density(data=sm_all, aes(x=avg_cor_btw_yr),fill="orange", alpha=0.4, adjust=1) + 
+    xlab("Average correlation between years")+
+  ylab("Density")+
+    theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                     plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+                     panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
+  
 
-mean(df$nsp) #~30 sp
-mean(df$nyr)# ~26 yr
+mean(sm_all$nsp) #~40 sp
+mean(sm_all$nyr)# ~25 yr
 
 # considering by species
-ggplot(df, aes(x = net_taildep/nint, y = TLslope.z, 
+ggplot(sm_all, aes(x = net_taildep/nint, y = TLslope.z, 
                color=as.factor(nsp), group=as.factor(nsp))) + 
   geom_point(alpha=0.3) + 
   geom_smooth(method="lm",se=F)+facet_wrap(~nsp)+
-  #scale_color_brewer(palette = "Reds")+
-  #labs(color="Richness")+
   theme_classic()+theme(legend.position = "none")
 
 # considering by groups: 2 REALM
-ggplot(df, aes(x = net_taildep/nint, y = TLslope.z,
+ggplot(sm_all, aes(x = net_taildep/nint, y = TLslope.z,
                color=REALM, group=REALM)) + 
-  geom_point(alpha=0.3,col=as.factor(df$nsp)) + 
-  geom_smooth(method="lm",se=T, aes(fill=REALM))+#facet_grid(vars(REALM))+
-  #scale_color_gradient(low = "white", high = "red")+
+  geom_point(alpha=0.3,col=as.factor(sm_all$nsp)) + 
+  geom_smooth(method="lm",se=T, aes(fill=REALM))+
   scale_color_manual(values=c("skyblue","green"))+
   scale_fill_manual(values=c("skyblue","darkolivegreen2"))+
-  theme_classic()#+theme(legend.position = "none")
+  theme_classic()
 
 # considering all point
-ggplot(df, aes(x = net_taildep/nint, y = TLslope.z
-               )) + 
-  geom_point(alpha=0.3,col=as.factor(df$nsp)) + 
-  geom_smooth(method="lm",se=T,col="red",aes(fill="red"))+#facet_grid(vars(REALM))+
-  theme_classic()+theme(legend.position = "none")
+gTA<-ggplot(sm_all, aes(x = net_taildep/nint, y = TLslope.z)) + ylab("Taylor's slope, z")+
+  geom_point(alpha=0.3,col="black",pch=21,fill="black") +
+  geom_smooth(method="loess",se=T,col="red",aes(fill="red"))+
+  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),legend.position="none",
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
+
 
 # make plot for z vs. net_taildep/nint for different range of species
-df$td_scl<-df$net_taildep/df$nint
-df$bins<-cut(df$nsp, breaks=c(14,20,25,30,35,45)) # make range 
-df0<-df%>%select(nsp,td_scl,avg_cor_btw_yr,nyr,TLslope.z,REALM,bins)
-tbl<-df0%>%group_by(bins)%>%summarise(avg_z=mean(TLslope.z))%>%ungroup()
-tbl
-plot(tbl$bins,tbl$avg_z)
-ggplot(df0, aes(x=bins, y=TLslope.z, col=factor(bins),alpha=0.3)) + 
-  geom_point() +
-  geom_point(data=tbl, aes(x=bins, y=avg_z), color='black', cex=3, pch=15)+
-  xlab("Richness")+
-  theme_classic()+theme(legend.position = "none")
+q<-quantile(sm_all$nsp,c(0.25,0.75))
+sm_all<-sm_all %>%
+  mutate(richness_cat = case_when(nsp < q[1] ~ "low R, <50%CI",
+                                           nsp > q[2] ~ "high R, >50%CI",
+                                           nsp <= q[2] & nsp >= q[1] ~ "mid R, in 50%CI"
+                                            )) %>%
+  mutate(richness_col = case_when(nsp < q[1] ~ "cyan",
+                                  nsp > q[2] ~ "lightsteelblue1",
+                                  nsp <= q[2] & nsp >= q[1] ~ "dodgerblue"))
 
-# now make a plot: net_taildep/nint for species category
-tbl<-df0%>%group_by(bins)%>%summarise(avg_ntd=mean(td_scl))%>%ungroup()
-ggplot(df0, aes(x=bins, y=td_scl, col=factor(bins),alpha=0.3)) + 
-  geom_point() +
-  geom_point(data=tbl, aes(x=bins, y=avg_ntd), color='black', cex=3, pch=15)+
-  xlab("Richness")+
-  theme_classic()+theme(legend.position = "none")
+gz_TA_R<-ggplot(sm_all, aes(x = net_taildep/nint, y = TLslope.z)) + 
+  geom_hline(yintercept=2,linetype="dotted",col="black")+
+  ylab("Taylor's slope, z")+xlab("Dependence in ranks (upper to lower)")+
+  geom_point(alpha=0.8,fill=sm_all$richness_col,pch=21) +
+  geom_smooth(method="loess",se=T,col="red",fill="red")+
+  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
+  
 
-library(PupillometryR)
-ggplot(data = df0, aes(y = td_scl, x = bins))+
-  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .4) + 
-  #coord_flip()+
-  geom_point(aes(y = td_scl,color=REALM), position = position_jitter(width = .05), size = 0.9, alpha = 0.4) +
-  geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.4)+ 
-  scale_color_manual(values=alpha(c("blue","green3"), 1))+
-  ylab("net_taildep/nint")+xlab("Richness")+
-  theme_classic()
+# plot for variance ratio vs z
+gz_VR<-ggplot(sm_all, aes(x = vr_LdM, y = TLslope.z)) + 
+  geom_hline(yintercept=2,linetype="dotted",col="black")+
+  geom_vline(xintercept=0.5,linetype="dotted",col="black")+
+  ylab("Taylor's slope, z")+xlab("Synchrony, VR")+xlim(c(0,1))+
+  geom_point(alpha=0.8,fill=sm_all$richness_col,pch=21) +
+  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
 
-# now with species number
-ggplot(data = df, aes(y = td_scl, x = nsp, col=REALM))+
-  geom_point(position = position_jitter(width = 0),size = 0.9, alpha = 0.4)+
-  scale_color_manual(values=alpha(c("blue","green3"), 1))+
-  ylab("net_taildep/nint")+xlab("Richness")+
-  geom_smooth(method="lm",se=F)+
-  theme_classic()
-
-ggplot(data = df, aes(y = td_scl, x = nsp))+
-  geom_point(position = position_jitter(width = 0),size = 0.9, alpha = 0.4)+
-  ylab("net_taildep/nint")+xlab("Richness")+
-  geom_smooth(method="lm",se=F,col="black")+
-  theme_classic()
+# plot for avg. cor btw years vs z
+gz_rho<-ggplot(sm_all, aes(x = avg_cor_btw_yr, y = TLslope.z)) + 
+  geom_hline(yintercept=2,linetype="dotted",col="black")+
+  #geom_vline(xintercept=0.5,linetype="dotted",col="black")+
+  ylab("Taylor's slope, z")+xlab("Average correlation between years")+
+  geom_point(alpha=0.8,fill=sm_all$richness_col,pch=21) +
+  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
 
 
-############### EXTRA PLOT ###########################
-# now plot z vs. rho for both realm with error bar
-df$color<-ifelse(df$REALM=="Terrestrial","green","skyblue")
 
-op<-par(mar=c(3,3,1,1),mgp=c(2,1,0))
-plot(df$avg_cor_btw_yr, df$TLslope.z, pch=19, xlab="rho", ylab="z",
-     col=df$color, ylim=c(0.1,3.5))
-arrows(x0=df$avg_cor_btw_yr, y0=df$TLslope.z.lowCI, 
-       x1=df$avg_cor_btw_yr, y1=df$TLslope.z.upCI, 
-       code=3, angle=90, length=0.05, col=df$color)
-abline(h=2, col="gray", lty=3)
-par(op)
+gR<-gR+annotate(geom="text",x=90, y=0.05, label="A", size=7, vjust=1, hjust=0,fill="dodgerblue")
+gz_rho<-gz_rho+annotate(geom="text",x=0.85, y=4, label="B", size=7, vjust=1, hjust=0,fill="dodgerblue")
+gz_VR<-gz_VR+annotate(geom="text",x=0.95, y=3.5, label="C", size=7, vjust=1, hjust=0,fill="dodgerblue")
+gz_TA_R<-gz_TA_R+annotate(geom="text",x=0.01, y=3.5, label="D", size=7, vjust=1, hjust=0,fill="dodgerblue")
+
+pdf("../../Results/Prelim_res_plot/test_empirical_z_taildep.pdf", width = 7, height = 7)
+grid.arrange(gR,gz_rho,
+             gz_VR,gz_TA_R,nrow = 2)
+dev.off()

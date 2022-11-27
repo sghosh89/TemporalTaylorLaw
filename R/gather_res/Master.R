@@ -11,15 +11,13 @@ if(!dir.exists("../../Results/gather_res/")){
 # play with exploratory data visualization by realm
 
 #source("generate_com.R") # simulation shows stability vs. nsp plot (Cottingham)
-
-source("Simulation_zmorethan2.R") # new mechanism for z>2
-source("test_empirical_z_taildep.R") # test with real data
-
-source("synchrony_and_z.R")
+#source("synchrony_and_z.R") # extra
 
 # for figures
 source("conceptual_fig1.R")
 source("Taylor_all_visualization.R") # considering both realm altogether
+source("test_empirical_z_taildep.R") # test with real data
+source("Simulation_zmorethan2.R") # new mechanism for z>2
 
 # raugh (conceptual fig 2)
 # upper tail dep in conceptual figure
