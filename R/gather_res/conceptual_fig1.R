@@ -86,10 +86,10 @@ g1<-ggplot(data=res, aes(x=z,y=icv,col=as.factor(nsp)))+geom_point()+geom_smooth
   scale_colour_brewer("Richness",palette = "Blues")+
   #scale_color_manual("Richness",values=c("lightpink1","magenta","purple"))+
   #scale_fill_manual("Richness",values=c("lightpink1","magenta","purple"))+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
-  theme(legend.position = "right")
+  theme(legend.position = "bottom")
 #g1
 
 # plot stability vs z for different richness
@@ -97,7 +97,7 @@ g2<-ggplot(data=res, aes(x=nsp,y=icv,col=z))+geom_point()+
   xlab("Richness")+ylab("Stability, iCV")+
   theme_bw()+
   scale_fill_brewer("z",palette = "Blues")+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   theme(legend.position = "top")
@@ -107,7 +107,7 @@ g2e<-ggplot(data=res, aes(x=SmithWilson,y=icv,col=z))+geom_point()+
   xlab("Evenness")+ylab("Stability, iCV")+
   theme_bw()+
   scale_fill_brewer("z",palette = "Blues")+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   theme(legend.position = "top")
@@ -120,12 +120,12 @@ gPE<-ggplot(data=res, aes(x=z,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)
   theme_bw()+
   geom_smooth(aes(y=pe.mv),linetype = "dashed",se=F)+
   scale_colour_brewer("Richness",palette = "Blues")+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         legend.position="none",
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
-annotate(geom="text",x=1.5, y=40, label="Solid: PE for avg Cv based,\n
-         Dashed: PE for mean-variance scaling", size=3)
+annotate(geom="text",x=1.8, y=40, label="Solid: PE without mean-variance scaling,\n
+         Dashed: PE with mean-variance scaling", size=3.5)
 #gPE
 
 # plot community abundance timeseries for z=1
@@ -142,16 +142,37 @@ totvz1<-log(var(dfa$tot))
 
 gz1<-ggplot(data=sa,aes(x=x,y=values,col=as.factor(ind)))+geom_hline(yintercept = mus, linetype="dotted",col="gray")+
   geom_line()+
-  theme_bw()+ylim(c(0.5,7))+xlab("Time in years")+ylab("Abundance, scaled")+
+  theme_bw()+ylim(c(0.5,8))+xlab("Time in years")+ylab("Abundance, scaled")+
   scale_color_manual("Richness", values=c("palegreen","limegreen","green4","blue"))+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         legend.position="none",
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   annotate(geom="text",x=25, y=3.8, label="Three individual sp", size=5)+
-  annotate(geom="text",x=50, y=4.8, label="z=1", size=5)+
+  #annotate(geom="text",x=50, y=4.8, label="z=1", size=5)+
 geom_line(data=dfa,aes(x=x,y=tot),size=1.2,col="green")+
-  annotate(geom="text",x=30, y=6.7, label="Community with 70 sp", size=5)
+  annotate(geom="text",x=35, y=7.7, label="Community with 70 sp, z=1", size=5)
+
+b<-spmat_z2[,spind]
+sb <- stack(as.data.frame(b))
+sb$x <- rep(seq_len(nrow(b)), ncol(b))
+dfb<-apply(b,MARGIN=1, FUN=sum)
+dfb<-data.frame(x=c(1:nyr),tot=dfb, ind="sptot")
+totmz2<-log(mean(dfb$tot))
+totvz2<-log(var(dfb$tot))
+
+gz2<-ggplot(data=sb,aes(x=x,y=values,col=ind))+geom_hline(yintercept = mus, linetype="dotted")+
+  geom_line()+
+  theme_bw()+ylim(c(0.5,8))+xlab("Time in years")+ylab("Abundance, scaled")+
+  scale_color_manual("Richness", values=c("goldenrod1","goldenrod2","goldenrod3"))+
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
+        legend.position="none",
+        plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+        panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
+  annotate(geom="text",x=25, y=4, label="Three individual sp", size=5)+
+ # annotate(geom="text",x=50, y=4.8, label="z=2", size=5)+
+  geom_line(data=dfb,aes(x=x,y=tot),size=1.2,col="goldenrod4")+
+  annotate(geom="text",x=35, y=7.7, label="Community with 70 sp, z=2", size=5)
 
 
 b<-spmat_z3[,spind]
@@ -165,15 +186,15 @@ totvz3<-log(var(dfb$tot))
 gz3<-ggplot(data=sb,aes(x=x,y=values,col=ind))+geom_hline(yintercept = mus, linetype="dotted")+
   geom_line()+
   theme_bw()+ylim(c(0.5,8))+xlab("Time in years")+ylab("Abundance, scaled")+
-  scale_color_manual("Richness", values=c("gold","orange","hotpink"))+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  scale_color_manual("Richness", values=c("orchid1","orchid2","orchid3"))+
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         legend.position="none",
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   annotate(geom="text",x=25, y=4, label="Three individual sp", size=5)+
-  annotate(geom="text",x=50, y=4.8, label="z=3", size=5)+
+ # annotate(geom="text",x=50, y=4.8, label="z=3", size=5)+
   geom_line(data=dfb,aes(x=x,y=tot),size=1.2,col="magenta")+
-  annotate(geom="text",x=30, y=7.7, label="Community with 70 sp", size=5)
+  annotate(geom="text",x=35, y=7.7, label="Community with 70 sp, z=3", size=5)
 
 x<-spmat_z1
 m <- apply(x, 2, mean)
@@ -182,6 +203,14 @@ log.m <- log(m)
 log.v <- log(v)
 dfz1<-data.frame(m=log.m,v=log.v)
 highlight_dfz1 <- dfz1[spind,]
+
+x<-spmat_z2
+m <- apply(x, 2, mean)
+v <- apply(x, 2, var)
+log.m <- log(m)
+log.v <- log(v)
+dfz2<-data.frame(m=log.m,v=log.v)
+highlight_dfz2 <- dfz2[spind,]
 
 x<-spmat_z3
 m <- apply(x, 2, mean)
@@ -192,10 +221,10 @@ dfz3<-data.frame(m=log.m,v=log.v)
 highlight_dfz3 <- dfz3[spind,]
 
 
-gTL<-ggplot(data=dfz1,aes(x=m,y=v))+geom_point(col="gray",pch=1,size=2.8)+
+gTL<-ggplot(data=dfz1,aes(x=m,y=v))+geom_point(col="darkolivegreen2",pch=1,size=2.8)+
   geom_smooth(method="lm",se=F,col="green",linetype="dashed")+
   theme_bw()+xlab("log(mean)")+ylab("log(variance)")+
-  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         legend.position="none",
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
@@ -203,27 +232,38 @@ gTL<-ggplot(data=dfz1,aes(x=m,y=v))+geom_point(col="gray",pch=1,size=2.8)+
              aes(x=m,y=v), 
              color=c("palegreen","limegreen","green4"),
              size=3)+
+  geom_point(data=dfz2, 
+             aes(x=m,y=v), 
+             color="gold",pch=1,
+             size=2.8)+geom_smooth(data=dfz2,method="lm",se=F,col="wheat4",linetype="dashed")+
+  geom_point(data=highlight_dfz2, 
+             aes(x=m,y=v), 
+             color=c("goldenrod1","goldenrod2","goldenrod3"),
+             size=3)+
   geom_point(data=dfz3, 
              aes(x=m,y=v), 
-             color="black",pch=1,
+             color="plum",pch=1,
              size=2.8)+
   geom_smooth(data=dfz3,method="lm",se=F,col="magenta",linetype="dashed")+
   geom_point(data=highlight_dfz3, 
              aes(x=m,y=v), 
-             color=c("gold","orange","hotpink"),
+             color=c("orchid1","orchid2","orchid3"),
              size=3)+
-  annotate(geom="text",x=-1.5, y=-4.5, label="slope, z=1", size=5)+
-  annotate(geom="text",x=-1, y=-10, label="slope, z=3", size=5)+ 
+  #annotate(geom="text",x=2.8, y=-3, label="slope, z=1", size=4)+
+  #annotate(geom="text",x=2.8, y=-1, label="slope, z=2", size=4)+ 
+  #annotate(geom="text",x=2.8, y=1, label="slope, z=3", size=4)+ 
   annotate("text", x = totmz1, y = totvz1, 
-           parse = T, label = "X", col="green")+
+           parse = T, label = "X", col="darkgreen")+
   annotate("text", x = totmz3, y = totvz3, 
-           parse = T, label = "X", col="magenta")
+           parse = T, label = "X", col="magenta")+
+  annotate("text", x = totmz2, y = totvz2, 
+           parse = T, label = "X", col="goldenrod4")
 
 #gTL
 
-pdf("../../Results/Prelim_res_plot/conceptual_fig1.pdf", width = 12, height = 6)
-grid.arrange(gz1, gTL, gz3, g1, gPE,nrow = 2, 
-             layout_matrix= rbind(c(1,2,3),c(4,NA,4.5)))
+pdf("../../Results/Prelim_res_plot/conceptual_fig1.pdf", width = 16, height = 6)
+grid.arrange(gz1, gz2, gz3, gTL, g1, gPE,nrow = 2, 
+             layout_matrix= rbind(c(1,2,3,4),c(NA,5,6,NA)))
 dev.off()
 
 

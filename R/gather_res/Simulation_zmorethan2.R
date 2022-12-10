@@ -241,7 +241,7 @@ ggsave(g1,
 
 
 
-# I run this code with species number n =20, n=25, n=30, and n=60
+# I run this code with species number n =20, n=25, n=30, n=40, and n=60
 #
 
 

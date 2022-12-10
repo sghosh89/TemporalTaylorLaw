@@ -115,12 +115,12 @@ gp3
 # for average CV and mean-var CV distribution
 gp4<-ggplot(df,aes(x=pe_avg_cv,y=pe_mv,fill=zgt2))+
   geom_point(alpha=0.3,shape=21)+
-  geom_abline(intercept = 0, slope = 1, color="gray", 
+  geom_abline(intercept = 0, slope = 1, color="gray55", 
               linetype="dotted", size=0.5)+
   #geom_smooth(method="lm",se=T,col="black")+
   scale_fill_manual("Taylor's slope",values=c("green","magenta"),labels = c("z<2", "z>2"))+
   xlim(c(0,13))+ylim(c(0,13))+
-  ylab("Portfolio effect, mean-variance scaling")+xlab("Portfolio effect, average CV based")+
+  ylab("Portfolio effect with mean-variance scaling")+xlab("Portfolio effect without mean-variance scaling")+
   theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
