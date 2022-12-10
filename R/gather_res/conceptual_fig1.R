@@ -5,6 +5,7 @@ rm(list=ls())
 #-------------
 set.seed(seed=123)
 library(ecofolio)
+library(adiv)
 library(ggplot2)
 library(gridExtra)
 library(dplyr)
@@ -30,11 +31,18 @@ gen_com_stab<-function(nyr, nsp, mu, z){
   res<-ecofolio::cv(tot_ts)
   icv<-1/res
   
+  m1<-rbind(eachmat,apply(eachmat,MARGIN=2,FUN=sum))
+  m1<-tail(m1,1)
+  m1<-as.data.frame(m1)
+  evenness<-adiv::specieseve(eachmat, method = "SmithWilson", tol = 1e-8)
+  SmithWilson<-evenness[1,1]
+  
   spmat<-eachmat
   return(list(spmat=spmat,
               icv=icv,
                pe.avg.cv=pe.avg.cv,
-               pe.mv=pe.mv))
+               pe.mv=pe.mv,
+              SmithWilson=SmithWilson))
 }
 
 # now generate data for CV vs. nsp for different z
@@ -45,7 +53,8 @@ res<-data.frame(z=NA*numeric(length(z_all)*length(nsplist)),
                 nsp=NA*numeric(length(z_all)*length(nsplist)),
                 icv=NA*numeric(length(z_all)*length(nsplist)),
                 pe.avg.cv=NA*numeric(length(z_all)*length(nsplist)),
-                pe.mv=NA*numeric(length(z_all)*length(nsplist)))
+                pe.mv=NA*numeric(length(z_all)*length(nsplist)),
+                SmithWilson=NA*numeric(length(z_all)*length(nsplist)))
 res$z<-rep(z_all,length(nsplist))
 res$nsp<-rep(nsplist,each=length(z_all))
 
@@ -66,6 +75,7 @@ for(i in 1:nrow(res)){
   res$icv[i]<-tempo$icv
   res$pe.avg.cv[i]<-tempo$pe.avg.cv
   res$pe.mv[i]<-tempo$pe.mv
+  res$SmithWilson[i]<-tempo$SmithWilson
 }
 #res$nsp<-as.factor(res$nsp)
 
@@ -91,6 +101,17 @@ g2<-ggplot(data=res, aes(x=nsp,y=icv,col=z))+geom_point()+
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   theme(legend.position = "top")
+
+# evenness: no change with z
+g2e<-ggplot(data=res, aes(x=SmithWilson,y=icv,col=z))+geom_point()+
+  xlab("Evenness")+ylab("Stability, iCV")+
+  theme_bw()+
+  scale_fill_brewer("z",palette = "Blues")+
+  theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+        plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+        panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
+  theme(legend.position = "top")
+
 
 # plot PE vs z for different richness
 gPE<-ggplot(data=res, aes(x=z,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)+
