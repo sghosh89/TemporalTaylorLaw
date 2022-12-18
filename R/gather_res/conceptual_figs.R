@@ -52,7 +52,7 @@ gen_com_stab<-function(nyr, nsp, mu, z){
 # now generate data for CV vs. nsp for different z
 nyr<-100
 z_all<-seq(from=1,to=3,by=0.1)
-nsplist<-c(30, 40, 50, 60, 70) # vary nsp 
+nsplist<-c(30, 50, 70) # vary nsp 
 res<-data.frame(z=NA*numeric(length(z_all)*length(nsplist)),
                 nsp=NA*numeric(length(z_all)*length(nsplist)),
                 icv=NA*numeric(length(z_all)*length(nsplist)),
@@ -97,15 +97,16 @@ g1<-ggplot(data=res, aes(x=z,y=icv,col=as.factor(nsp)))+geom_smooth(se=F)+
   theme(legend.position = c(0.8,0.5))
 g1
 
-# plot stability vs z for different richness
-g2<-ggplot(data=res, aes(x=nsp,y=icv,col=z))+geom_point()+
+# plot stability vs richness for different z
+rese<-res%>%filter(z%in%c(1,2,3))%>%arrange(z)
+g2<-ggplot(data=rese, aes(x=nsp,y=icv,col=as.factor(z)))+geom_point()+geom_line()+
   xlab("Richness")+ylab("Stability, iCV")+
   theme_bw()+
-  scale_fill_brewer("z",palette = "Blues")+
-  theme(text = element_text(size = 14),axis.text = element_text(size = 14),
+  scale_color_manual("z", values=c("darkblue","goldenrod4","magenta"))+
+  theme(text = element_text(size = 16),axis.text = element_text(size = 16),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
-  theme(legend.position = "top")
+  theme(legend.position = c(0.2,0.8))
 
 # evenness: no change with z
 g2e<-ggplot(data=res, aes(x=SmithWilson,y=icv,col=z))+geom_point()+
@@ -119,7 +120,7 @@ g2e<-ggplot(data=res, aes(x=SmithWilson,y=icv,col=z))+geom_point()+
 
 
 # plot PE vs z for different richness
-gPE<-ggplot(data=res, aes(x=zfit,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)+
+gPE<-ggplot(data=res, aes(x=z,y=pe.avg.cv,col=as.factor(nsp)))+geom_smooth(se=F)+
   xlab("Taylor's law slope, z")+ylab("Portfolio effect, PE")+
  geom_vline(xintercept = 2, linetype="dotted", col="gray")+
   theme_bw()+
@@ -139,8 +140,13 @@ gPE
 pdf("../../Results/Prelim_res_plot/conceptual_fig2.pdf", width = 10, height = 5)
 g1<-g1+annotate(geom="text",x=Inf, y=Inf,hjust=1.5,vjust=1.2, label="A", size=8)
 gPE<-gPE+annotate(geom="text",x=-Inf, y=Inf,hjust=-0.5,vjust=1.2, label="B", size=8)
-grid.arrange(g1, gPE,nrow = 1)
+grid.arrange(g1, gPE, nrow = 1)
 dev.off()
+
+pdf("../../Results/Prelim_res_plot/conceptual_fig2inset.pdf", width = 3.8, height = 3.8)
+grid.arrange(g2, nrow = 1)
+dev.off()
+
 
 #==========================================
 
@@ -280,6 +286,9 @@ gz3<-ggplot(data=sb,aes(x=x,y=values,col=as.factor(ind)))+
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
 gz3
+
+
+
 
 
 x<-spmat_z1

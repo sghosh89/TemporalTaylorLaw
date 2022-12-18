@@ -71,7 +71,7 @@ gp1<-sm_all_good%>%
     stat = 'bin', vjust = -0.5, breaks = br
   )+ ylim(c(0, 1))+xlab("Taylor's slope, z")+ylab("Density")+
   #scale_y_continuous(labels = scales::percent)+
-  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme_bw()+theme(text = element_text(size = 14),axis.text = element_text(size = 12),
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))
   
@@ -102,7 +102,7 @@ gp3<-df%>%ggplot(aes(x=nsp,y=stability,fill=zgt2))+
   geom_smooth(method="lm",se=T,col="black")+
   scale_fill_manual("",values=c("green","magenta"),labels = c("z<2", "z>2"))+
   ylab("Stability, iCV")+xlab("Richness")+
-  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  theme_bw()+theme(text = element_text(size = 14),axis.text = element_text(size = 12),
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
   theme(legend.position = c(0.84,0.13))
@@ -113,27 +113,41 @@ gp3
 # with mean variance scaling CV
 #==============================================================
 # for average CV and mean-var CV distribution
-gp4<-ggplot(df,aes(x=pe_avg_cv,y=pe_mv,fill=zgt2))+
+gp4<-ggplot(df,aes(y=pe_avg_cv,x=pe_mv,fill=zgt2))+
   geom_point(alpha=0.3,shape=21)+
   geom_abline(intercept = 0, slope = 1, color="gray55", 
               linetype="dotted", size=0.5)+
   #geom_smooth(method="lm",se=T,col="black")+
   scale_fill_manual("Taylor's slope",values=c("green","magenta"),labels = c("z<2", "z>2"))+
   xlim(c(0,13))+ylim(c(0,13))+
-  ylab("Portfolio effect with mean-variance scaling")+xlab("Portfolio effect without mean-variance scaling")+
-  theme_bw()+theme(text = element_text(size = 12),axis.text = element_text(size = 12),
+  xlab("Portfolio effect with mean-variance scaling")+ylab("Portfolio effect without mean-variance scaling")+
+  theme_bw()+theme(text = element_text(size = 14),axis.text = element_text(size = 12),
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
   theme(legend.position = c(0.8,0.5))
 
+df<-df[c("TLslope.z","pe_avg_cv","pe_mv")]
+df<-gather(df, PE, value,2:3)
+gp5<-df %>%
+  ggplot( aes(x=value, fill=PE)) +
+  geom_histogram( color="#e9ecef", alpha=0.4, position = 'identity') +
+  scale_fill_manual(values=c("red", "blue"),labels=c("Without mean-variance scaling",
+                                                       "With mean variance scaling")) +
+  labs(fill="")+xlab("Portfolio effect, PE")+ylab("Count")+
+  theme_bw()+theme(text = element_text(size = 14),axis.text = element_text(size = 12),
+                   plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+                   panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
+  theme(legend.position = c(0.5,0.85))
+gp5
 
 gp1<-gp1+annotate(geom="text",x=Inf, y=Inf, label="A", size=7, vjust=2, hjust=2)
 gp3<-gp3+annotate(geom="text",x=Inf, y=Inf, label="B", size=7, vjust=2, hjust=2)
-gp4<-gp4+annotate(geom="text",x=Inf, y=Inf, label="C", size=7, vjust=2, hjust=2)
+gp5<-gp5+annotate(geom="text",x=Inf, y=Inf, label="C", size=7, vjust=2, hjust=2)
+gp4<-gp4+annotate(geom="text",x=Inf, y=Inf, label="D", size=7, vjust=2, hjust=2)
 
 
-pdf("../../Results/Prelim_res_plot/Taylor_all_visualization.pdf", width = 12, height = 4)
-grid.arrange(gp1,gp3,gp4,nrow = 1)
+pdf("../../Results/Prelim_res_plot/Taylor_all_visualization.pdf", width = 9, height = 9)
+grid.arrange(gp1,gp3,gp5,gp4,nrow = 2)
 dev.off()
 
 
