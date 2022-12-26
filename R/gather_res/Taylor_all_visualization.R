@@ -101,7 +101,7 @@ gp3<-df%>%ggplot(aes(x=nsp,y=stability,fill=zgt2))+
   scale_y_continuous(trans = 'log2')+
   geom_smooth(method="lm",se=T,col="black")+
   scale_fill_manual("",values=c("green","magenta"),labels = c("z<2", "z>2"))+
-  ylab("Stability, iCV")+xlab("Richness")+
+  ylab("Stability (=1/CV)")+xlab("Richness")+
   theme_bw()+theme(text = element_text(size = 14),axis.text = element_text(size = 12),
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 

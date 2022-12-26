@@ -86,7 +86,7 @@ ggplot(data=res2,aes(x=z,y=zfit))+geom_point()+geom_abline(slope=1,intercept=0)
 
 # plot stability vs z for different richness
 g1<-ggplot(data=res, aes(x=z,y=icv,col=as.factor(nsp)))+geom_smooth(se=F)+
-  xlab("Taylor's law slope, z")+ylab("Stability, iCV")+
+  xlab("Taylor's law slope, z")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_colour_brewer("Richness",palette = "Set2")+
   #scale_color_manual("Richness",values=c("lightpink1","magenta","purple"))+
@@ -100,7 +100,7 @@ g1
 # plot stability vs richness for different z
 rese<-res%>%filter(z%in%c(1,2,3))%>%arrange(z)
 g2<-ggplot(data=rese, aes(x=nsp,y=icv,col=as.factor(z)))+geom_point()+geom_line()+
-  xlab("Richness")+ylab("Stability, iCV")+
+  xlab("Richness")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_color_manual("z", values=c("darkblue","goldenrod4","magenta"))+
   theme(text = element_text(size = 16),axis.text = element_text(size = 16),
@@ -110,7 +110,7 @@ g2<-ggplot(data=rese, aes(x=nsp,y=icv,col=as.factor(z)))+geom_point()+geom_line(
 
 # evenness: no change with z
 g2e<-ggplot(data=res, aes(x=SmithWilson,y=icv,col=z))+geom_point()+
-  xlab("Evenness")+ylab("Stability, iCV")+
+  xlab("Evenness")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_fill_brewer("z",palette = "Blues")+
   theme(text = element_text(size = 14),axis.text = element_text(size = 14),
@@ -158,7 +158,8 @@ nsp<-70
 df_R70_z123<-data.frame(z=z_all,
                         zfit=NA*numeric(length(z_all)),
                         iCV=NA*numeric(length(z_all)),
-                        delta=NA*numeric(length(z_all))) 
+                        delta=NA*numeric(length(z_all)),
+                        var_tot=NA*numeric(length(z_all))) 
 
 for(i in 1:nrow(df_R70_z123)){
   
@@ -171,7 +172,8 @@ for(i in 1:nrow(df_R70_z123)){
   df_R70_z123$zfit[i]<-tempo$fittaylor_z
   spmat<-tempo$spmat
   
-  log.v.actual=log(var(apply(spmat, 1, sum)))
+  var_tot<-var(apply(spmat, 1, sum))
+  log.v.actual=log(var_tot)
   totcommunity<-data.frame(log.m=log(mean(apply(spmat, 1, sum))))# mean of total community biomass
                       
   m <- apply(spmat, 2, mean)
@@ -182,7 +184,7 @@ for(i in 1:nrow(df_R70_z123)){
   logv.predicted<-predict(fit,totcommunity) # predicted as per Taylor's fit
   
   df_R70_z123$delta[i]<-logv.predicted - log.v.actual
-  
+  df_R70_z123$var_tot[i]<-var_tot
   if(z==1){
     spmat_z1<-spmat
   }
@@ -365,7 +367,7 @@ gTL
 
 scale2=10
 gnew<-ggplot(df_R70_z123,aes(x=zfit,y=iCV))+geom_point(col="black")+geom_smooth(se=F,col="black")+
-  geom_point(aes(y=delta*scale2),col="red")+geom_smooth(se=F,aes(y=delta*10),col="red")+ 
+  geom_point(aes(y=delta*scale2),col="red")+geom_smooth(se=F,aes(y=delta*scale2),col="red")+ 
   scale_y_continuous(
     # Features of the first axis
     name = "Stability, iCV",
@@ -379,12 +381,26 @@ gnew<-ggplot(df_R70_z123,aes(x=zfit,y=iCV))+geom_point(col="black")+geom_smooth(
   xlab("Taylor's slope, z")
 
 
+ggplot(df_R70_z123,aes(x=zfit,y=sqrt(var_tot)))+
+  geom_point(col="black")+
+  geom_smooth(se=F,col="black")
+
+
+
+
+
 pdf("../../Results/Prelim_res_plot/conceptual_fig1.pdf", width = 8, height =10)
 grid.arrange(gz1, gz2, gz3, gTL, gnew, ncol = 2, 
              layout_matrix= cbind(c(1,2,3),c(4,5,NA)))
 dev.off()
 
+# compute variance ratio for three communities
+m1<-spmat_z1
+ecofolio::synchrony(m1)
 
+m2<-spmat_z2
+ecofolio::synchrony(m2)
 
-
+m3<-spmat_z3
+ecofolio::synchrony(m3)
 
