@@ -24,8 +24,6 @@ N<-26 #length of time series
 n<-40 #number of sp
 numdat<-1000 #the number of datasets to get from the normal copula
 
-
-
 rholist<-c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9) #normal-copula parameter for dependence between locations
 #this is a covariance, see below call to rmvnorm
 m_list <- vector(mode = "list", length = length(rholist)) # holds each array in each space
@@ -38,35 +36,42 @@ for(k in 1:length(rholist)){
   sig<-matrix(rho,N,N)
   diag(sig)<-1
   m<-rmvnorm(n*numdat,mean=rep(0,N),sigma=sig) # each column of m has normal histogram
+  
   #dim(m)
   m<-array(m,c(n,numdat,N))
   #dim(m)
   m<-aperm(m,c(1,3,2)) 
   #dim(m)# 2nd dim is normally distributed 
   #e.g. hist(m[,2,],50)
-  #plot(m[1,,1],m[2,,1]) #sp1 timeseries vs. sp2 timeseries
+  #plot(m[,1,1],m[,2,1]) # yr1 vs yr2
   
   gshape<-7.5
   gscale<-1 #gamma parameters
   
   # pnorm(m) makes normal to uniform
   # then qgamma(...) makes uniform to gamma distributed
-  m<-cop_to_marg_trans(pnorm(m))
-  #dim(m)
-  #plot(m[1,,1],m[2,,1]) #sp1 timeseries vs. sp2 timeseries
-  #hist(m[1,,]) #gamma
+  mg<-cop_to_marg_trans(pnorm(m))
+  #dim(mg)
+  #plot(mg[,1,1],mg[,2,1]) #yr1 timeseries vs. yr2 timeseries
+  #hist(mg[,1,]) #gamma
   
   #***surrogates using a Clayton copula, spearman preserving
   #get the Clayton parameter to use
   ncop<-normalCopula(rho,2)
+  
   ccop<-claytonCopula(2,2)
   cparam<-iRho(ccop,rho(ncop))
   ccop<-claytonCopula(cparam,N)
   
+  #nparam<-iRho(ncop,rho(ncop))
+  #ncop<-normalCopula(nparam,N)
+  
   #generate the surrogates
-  csurrog<-array(NA,dim(m))
-  for (counter in 1:dim(m)[3]){
-    csurrog[,,counter]<-copsurrognd(m[,,counter],targetcop=ccop,numsurrog=1)
+  csurrog<-array(NA,dim(mg))
+  #nsurrog<-csurrog
+  for (counter in 1:dim(mg)[3]){
+    csurrog[,,counter]<-copsurrognd(mg[,,counter],targetcop=ccop,numsurrog=1)
+    #nsurrog[,,counter]<-copsurrognd(mg[,,counter],targetcop=ncop,numsurrog=1)
   }
   
   #***surrogates using a survival Clayton, spearman preserving
@@ -75,7 +80,7 @@ for(k in 1:length(rholist)){
   scsurrog<-cop_to_marg_trans((1-marg_to_cop_trans(csurrog)))
   
   # make N by n by numdat = year by species by replica
-  m1<-aperm(m,c(2,1,3)) 
+  m1<-aperm(mg,c(2,1,3)) # normal copula
   #dim(m1)
   c1<-aperm(csurrog,c(2,1,3))
   sc1<-aperm(scsurrog,c(2,1,3))
@@ -128,7 +133,7 @@ arrows(x0=rholist, y0=zs_SC-sd_zs_SC, x1=rholist, y1=zs_SC+sd_zs_SC,
 dev.off()
 # just check
 #plot(C_list[[5]][1,,1],C_list[[5]][2,,1]) # lower tail dep.
-#cor(C_list[[5]][100,,1],C_list[[5]][2,,1],method="spearman")
+#cor(C_list[[5]][1,,1],C_list[[5]][2,,1],method="spearman")
 
 # function to compute average positive and negative 
 # pairwise Spearman correlations between columns (species)
@@ -257,6 +262,20 @@ v2<-1-v2
 d<-data.frame(Year=paste("sp",1:10,sep=""), v1, v2)
 plot(v1,v2, pch=16, xlim=c(0,1),ylim=c(0,1))
 text(d$v1, d$v2-0.05, labels=d$Year)
+
+#######################################
+
+# all these numbers should be similar
+#dim(m1)
+#cor.test(m1[1,,1],m1[4,,1],method="spearman")
+#cor.test(c1[1,,1],c1[4,,1],method="spearman")
+
+#plot(m1[3,,1],m1[4,,1])
+#plot(c1[3,,1],c1[4,,1])
+
+#range(m1)
+#range(c1)
+
 
 
 
