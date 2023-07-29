@@ -55,7 +55,8 @@ x_allsite<-x_allsite%>%group_by(newsite,YEAR,MONTH,Species)%>%
 
 newsite_bad<-c()
 for(k in 1:length(newsite)){
-  x<-x_allsite%>%filter(newsite==newsite[k])
+  id<-which(x_allsite$newsite%in%newsite[k])
+  x<-x_allsite[id,]
   
   # do not consider these unknown sp into analysis
   x<-x%>%filter(Species%notin%c("Unknown","Unknown "))
@@ -134,6 +135,7 @@ for(k in 1:length(newsite)){
     id<-which(colnames(input_tailanal)=="raresp")
     if(length(id)>0){
       input_tailanal<-input_tailanal[,-id]
+      input_tailanal<-as.matrix(input_tailanal)
     }
     nsp<-ncol(input_tailanal)
     if(nsp>=sp_threshold){

@@ -52,10 +52,12 @@ if(length(newsite)>1){
   x_allsite<-x
 }
 
-
-for(k in 1:length(newsite)){
-  
-  x<-x_allsite%>%filter(newsite==newsite[k])
+# for study 39 its only one site
+# so x and x_allsite is same, and site=newsite
+#for(k in 1:length(newsite)){
+#  id<-which(x_allsite$newsite%in%newsite[k])
+#  x<-x_allsite[id,]
+  #x<-x_allsite%>%filter(newsite==newsite[k])
   
   # do not consider these unknown sp into analysis
   x<-x%>%filter(Species%notin%c("Unknown","Unknown "))
@@ -65,7 +67,7 @@ for(k in 1:length(newsite)){
   
   #---------- ok, after seeing t0, we need to rarefy --------------
   min_samp<-min(t0$nm) # min months sampled each year
-  cat("---------- min_samp = ",min_samp," , newsite = ",newsite[k]," ------------------- \n")
+  #cat("---------- min_samp = ",min_samp," , newsite = ",newsite[k]," ------------------- \n")
   need_rarefy<-length(unique(t0$nm))>1
   
   AB<-is.na(x$ABUNDANCE_TYPE)[1]
@@ -102,12 +104,8 @@ for(k in 1:length(newsite)){
   
   input_sp<-list(spmat=xmat,meta=xmeta)
   
-  if(length(newsite)>1){
-    resloc<-paste("../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/39/",newsite[k],"/",sep="")
-  }else{
-    resloc<-"../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/39/"
-  }
-  
+  resloc<-"../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/39/"
+ 
   saveRDS(input_sp,paste(resloc,"spmat.RDS",sep=""))
   
   #----------- saving input spmat for tailanal ---------------------
@@ -122,7 +120,7 @@ for(k in 1:length(newsite)){
   
   if(allraresp==T){
     
-    newsite_bad<-c(newsite_bad,newsite[k])
+    newsite_bad<-c(newsite_bad,newsite)
     
   }else{
     if(length(rareid)!=0){
@@ -147,7 +145,7 @@ for(k in 1:length(newsite)){
       input_tailanal<-input_tailanal
     }else{
       input_tailanal<-NA # community less than 15 sp will not be considered
-      newsite_bad<-c(newsite_bad,newsite[k])
+      newsite_bad<-c(newsite_bad,newsite)
     }
     
     saveRDS(input_tailanal,paste(resloc,"input_tailanal.RDS",sep=""))
@@ -160,7 +158,7 @@ for(k in 1:length(newsite)){
         dir.create(resloc2)
       }
       #----------- analysis ----------------
-      resloc<-paste(resloc2,newsite[k],"/",sep="")
+      resloc<-paste(resloc2,newsite,"/",sep="")
       if(!dir.exists(resloc)){
         dir.create(resloc)
       }
@@ -169,8 +167,8 @@ for(k in 1:length(newsite)){
     }
     #---------------------------------------------
   }
-  cat("---------- k = ",k,"-----------\n")
-}
+ # cat("---------- k = ",k,"-----------\n")
+#}
 
 
 #--------------------------------------------------------

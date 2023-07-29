@@ -85,7 +85,7 @@ source("terrestrial_plotlevel_67.R") # no plots have >=15 sp.
 source("terrestrial_plotlevel_214.R") # no plots have >=15 sp.
 source("terrestrial_plotlevel_215.R")
 # source("terrestrial_plotlevel_221.R") # not a single lat-lon sampled atleast for 20 yrs, if want to include this study aggregate all
-source("terrestrial_plotlevel_243.R")# no plots have >=15 sp.
+source("terrestrial_plotlevel_243.R")
 #source("terrestrial_plotlevel_298.R") # not a single lat-lon sampled atleast for 20 yrs, if want to include this study aggregate all
 # source("terrestrial_plotlevel_300.R") # STUDY_ID=300 is BioTIMEx data for landis_2018 - so we excluded here
 source("terrestrial_plotlevel_301.R")# no plots have >=15 sp.
@@ -106,24 +106,24 @@ source("terrestrial_plotlevel_420.R")# no plots have >=15 sp.
 #source("terrestrial_plotlevel_483.R") # all raresp, warnings! # no plots have >=15 sp.
 #source("terrestrial_plotlevel_497.R") # all raresp, warnings! # no plots have >=15 sp.
 source("terrestrial_plotlevel_528.R")# no plots have >=15 sp.
-source("terrestrial_plotlevel_529.R")# no plots have >=15 sp.
+source("terrestrial_plotlevel_529.R")
 source("terrestrial_plotlevel_530.R")# no plots have >=15 sp.
 source("terrestrial_plotlevel_531.R")# no plots have >=15 sp.
 source("terrestrial_plotlevel_532.R")# no plots have >=15 sp.
 source("terrestrial_plotlevel_533.R")# no plots have >=15 sp.
 source("terrestrial_plotlevel_534.R")# no plots have >=15 sp.
-source("terrestrial_plotlevel_536.R")# no plots have >=15 sp.
+source("terrestrial_plotlevel_536.R")
 source("terrestrial_plotlevel_538.R")
 #source("terrestrial_plotlevel_540.R") # # no site left with min 20 year sampling
 
 
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/table_for_map.RDS")
 df_included<-df%>%filter(site%notin%c(46,47,54,56,59,63,67,
-                                      195,214,243,221,298,
+                                      195,214,221,298,
                                       300,301,308,311,
                                       356,360,361,366,
                                       413,416,420,483,497,
-                                      528,529,530,531,532,533,534,536,540))
+                                      528,530,531,532,533,534,540))
 saveRDS(df_included,"../../DATA/for_BioTIME/wrangled_data/Terrestrial_plotlevel/table_for_map_selected.RDS")
 
 #--------------- Do a summary stats for terrestrial sites ------------------
