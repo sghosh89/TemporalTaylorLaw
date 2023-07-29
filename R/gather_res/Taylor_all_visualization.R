@@ -4,7 +4,7 @@ library(gridExtra)
 `%notin%` <- Negate(`%in%`)
 #======================= gather all results ======================
 #----------------------------- for BioTIME -----------------------------------------------------
-sm_BioTIME<-readRDS("../../Results/for_BioTIME/stability_and_TL_est_insect.RDS")
+sm_BioTIME<-readRDS("../../Results/for_BioTIME/stability_and_TL_est_BioTIME.RDS")
 #----------------------------------- for_BioTIMEx -------------------------------------------
 sm_BioTIMEx<-readRDS("../../Results/for_BioTIMEx/stability_and_TL_est_BioTIMEx.RDS")
 all(colnames(sm_BioTIME)==colnames(sm_BioTIMEx))==T
@@ -52,13 +52,13 @@ sm_all_good<-sm_all_good%>%arrange(source)#1722 observations in total
 
 saveRDS(sm_all_good,"../../Results/gather_res/TaylorEstimate_alldata.RDS")
 
-# total 1763 data
+# total 1754 data
 #-------------------------------------------------------------------
-table(sm_all_good$REALM) # 111 freshwater, 1652 terrestrial
+table(sm_all_good$REALM) # 110 freshwater, 1644 terrestrial
 #------------------------ NOW DO PLOTTING ----------------------------------------
 # first histogram of taylor's slope by REALM
-range(sm_all_good$TLslope.z) # 0.9057848 to 3.5075759
-# 1763 community data
+range(sm_all_good$TLslope.z) # 0.529 to 3.5075759
+# 1754 community data
 
 br <- c(0,1,2,3,4)
 # for terrestrial

@@ -20,8 +20,8 @@ marg_to_cop_trans<-function(x){ #transforms to copula space
 #--------------------------------------------
 
 #***constants
-N<-26 #length of time series
-n<-40 #number of sp
+N<-23 #length of time series
+n<-44 #number of sp
 numdat<-1000 #the number of datasets to get from the normal copula
 
 rholist<-c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9) #normal-copula parameter for dependence between locations

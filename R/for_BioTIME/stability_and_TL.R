@@ -64,7 +64,7 @@ sm_BT<-sm_BT%>%dplyr::select(c(source,STUDY_ID,newsite,REALM,TAXA,ORGANISMS,
                                  stability,cv_com,TLslope.z,TLslope.z.lowCI,
                                  TLslope.z.upCI,TLintercept,pe_avg_cv,pe_mv))
 
-saveRDS(sm_BT,"../../Results/for_BioTIME/stability_and_TL_est_insect.RDS")
+saveRDS(sm_BT,"../../Results/for_BioTIME/stability_and_TL_est_BioTIME.RDS")
 
 
 
