@@ -53,10 +53,10 @@ x_allsite<-x_allsite%>%group_by(newsite,YEAR,MONTH,Species)%>%
             LONGITUDE=LONGITUDE)%>%ungroup()
 # NOTE: ABUNDANCE TYPE should be kept as it is - if NA then keep NA
 #------------------------------------------------------------------------------------------------------------
-
+newsite_bad<-c()
 for(k in 1:length(newsite)){
-  x<-x_allsite%>%filter(newsite==newsite[k])
-  
+  id<-which(x_allsite$newsite%in%newsite[k])
+  x<-x_allsite[id,]  
   # do not consider these unknown sp into analysis
   x<-x%>%filter(Species%notin%c("unspecifiable ","Unknown","Unknown rotifer", "Unknown rotifer2", "unknown ","Unknown "))
   
@@ -158,7 +158,7 @@ for(k in 1:length(newsite)){
   }
   #---------------------------------------------
 }
-
+newsite<-setdiff(newsite,newsite_bad)
 #--------------------------------------------------------
 saveRDS(newsite,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/254/newsite.RDS")
 

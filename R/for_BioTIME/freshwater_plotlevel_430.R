@@ -92,8 +92,9 @@ for(k in 1:length(newsite)){
 #------------ now format the data as per input format for tail analysis ------------
 badsite<-c()
 for(k in 1:length(newsite)){
-  x<-x_agg%>%filter(newsite==newsite[k])
-  
+  #x<-x_agg%>%filter(newsite==newsite[k])
+  id<-which(x_agg$newsite%in%newsite[k])
+  x<-x_agg[id,]
   # do not consider these unknown sp into analysis
   x<-x%>%filter(Species%notin%c("unspecifiable ","Unknown","Unknown rotifer", "Unknown rotifer2", "unknown ","Unknown "))
   

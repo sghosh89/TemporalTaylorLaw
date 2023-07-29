@@ -56,7 +56,8 @@ for(k in 1:length(newsite)){
 #------------------------------------------------------------
 
 for(k in 1:length(newsite)){
-  x<-x_allsite%>%filter(newsite==newsite[k])
+  id<-which(x_allsite$newsite%in%newsite[k])
+  x<-x_allsite[id,]
   
   # do not consider these unknown sp into analysis
   x<-x%>%filter(Species%notin%c("unspecifiable ","Unknown","Unknown rotifer", "Unknown rotifer2", "unknown ","Unknown "))
@@ -156,7 +157,7 @@ for(k in 1:length(newsite)){
       dir.create(resloc)
     }
     res<-tail_analysis(mat = input_tailanal, resloc = resloc, nbin = 2)
-    
+    print("tail analysis done for newsite \n")
   }
   #---------------------------------------------
 }
