@@ -20,7 +20,7 @@ x<-x%>%mutate(newsite=paste("STUDY_ID_",site,"_PLOT_",PLOT,sep=""))
 newsite<-sort(unique(x$newsite))
 
 # check if each newsite visited for >20 years?
-tt<-x%>%group_by(newsite)%>%summarize(n=n_distinct(YEAR))%>%ungroup()
+tt<-x%>%group_by(newsite)%>%summarise(n=n_distinct(YEAR))%>%ungroup()
 
 # include sites which are sampled > 20 years
 tt<-tt%>%filter(n>=20)
@@ -29,7 +29,7 @@ tt<-tt%>%filter(n>=20)
 x_allsite<- x %>% filter(newsite %in% tt$newsite)
 newsite<-tt$newsite
 
-t2<-x_allsite%>%group_by(newsite,YEAR)%>%summarize(n=n_distinct(MONTH))%>%ungroup()
+t2<-x_allsite%>%group_by(newsite,YEAR)%>%summarise(n=n_distinct(MONTH))%>%ungroup()
 
 # Now, create folder for all these newsite
 for(k in 1:length(newsite)){
@@ -65,13 +65,13 @@ for(k in 1:length(newsite)){
   id<-which(colnames(x)==field)
   
   if(need_rarefy==T){
-    study<-x%>%select(DAY,MONTH,YEAR,Species,Value=id)
+    study<-x%>%dplyr::select(DAY,MONTH,YEAR,Species,Value=id)
     x_c<-monthly_rarefy(study = study,resamples = 100,field = field)
   }else{
-    x<-x%>%select(YEAR,Species,Value=id)
+    x<-x%>%dplyr::select(YEAR,Species,Value=id)
     x<-x%>%group_by(Species,YEAR)%>%
       dplyr::summarise(Value=mean(Value))%>%ungroup()
-    c1<-x%>%group_by(Species)%>%summarize(n_distinct(YEAR))%>%ungroup() 
+    c1<-x%>%group_by(Species)%>%summarise(n_distinct(YEAR))%>%ungroup() 
     # As all species are not found each year, we need to fill in the missing values with 0.
     x_c<-x %>% 
       complete(Species, 
@@ -96,11 +96,12 @@ for(k in 1:length(newsite)){
   # first we aggregated the rare sp (present even less than 30% of sampled years) into a pseudo sp 
   presentyr<-apply(X=m$spmat,MARGIN=2,FUN=function(x){sum(x>0)})
   presentyr<-unname(presentyr)
-  rareid<-which(presentyr<=0.3*nrow(m$spmat)) # rare sp = present less than 30% of sampled year
+  commonspid<-which(presentyr>=0.7*nrow(m$spmat)) # consider species with >70% present yr
+  rareid<-which(presentyr<0.7*nrow(m$spmat)) 
   
   allraresp<-ncol(m$spmat)==length(rareid) # that means not all sp are rare
   
-  if(allraresp==T){
+  if(allraresp==T | length(commonspid)==1){
     
     newsite_bad<-c(newsite_bad,newsite[k])
     
@@ -109,7 +110,7 @@ for(k in 1:length(newsite)){
       raresp<-m$spmat[,rareid]
       raresp<-as.matrix(raresp) # this line is for when you have only one rare sp
       raresp<-apply(X=raresp,MARGIN=1,FUN=sum)
-      m1<-m$spmat[,-rareid]
+      m1<-m$spmat[,commonspid]
       m1<-cbind(m1,raresp=raresp)
       m1<-as.data.frame(m1)
       input_tailanal<-m1

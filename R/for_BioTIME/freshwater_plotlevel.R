@@ -94,16 +94,16 @@ saveRDS(df,"../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_
 # tail analysis 
 source("./freshwater_plotlevel_57.R")
 source("./freshwater_plotlevel_229.R") 
-source("./freshwater_plotlevel_238.R")
-source("./freshwater_plotlevel_247.R")
+source("./freshwater_plotlevel_238.R") # no site found
+source("./freshwater_plotlevel_247.R")# no site found
 source("./freshwater_plotlevel_253.R")
 source("./freshwater_plotlevel_254.R")
-#source("./freshwater_plotlevel_430.R") # no site found with my criterion
-#source("./freshwater_plotlevel_431.R") # no site found with my criterion
+source("./freshwater_plotlevel_430.R") # no site found with my criterion
+source("./freshwater_plotlevel_431.R") # no site found with my criterion
 source("./freshwater_plotlevel_478.R")
 
 df<-readRDS("../../DATA/for_BioTIME/wrangled_data/Freshwater_plotlevel/table_for_map.RDS")
-df<-df%>%filter(site%notin%c("430","431"))
+df<-df%>%filter(site%notin%c("238","247","430","431"))
 #--------------- Do a summary stats for freshwater sites ------------------
 source("compute_avg_cor.R")
 summary_table<-c()

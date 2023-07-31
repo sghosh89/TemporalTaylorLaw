@@ -107,11 +107,12 @@ m<-readRDS(paste(resloc,"spmat.RDS",sep=""))
 # first we aggregated the rare sp (present even less than 30% of sampled years) into a pseudo sp 
 presentyr<-apply(X=m$spmat,MARGIN=2,FUN=function(x){sum(x>0)})
 presentyr<-unname(presentyr)
-rareid<-which(presentyr<=0.3*nrow(m$spmat)) # rare sp = present less than 30% of sampled year
+commonspid<-which(presentyr>=0.7*nrow(m$spmat)) # consider species with >70% present yr
+rareid<-which(presentyr<0.7*nrow(m$spmat)) 
 
 allraresp<-ncol(m$spmat)==length(rareid) # that means not all sp are rare
 
-if(allraresp==T){
+if(allraresp==T | length(commonspid)==1){
   
   newsite_bad<-c(newsite_bad,newsite)
   
