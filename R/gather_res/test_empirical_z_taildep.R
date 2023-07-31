@@ -33,10 +33,10 @@ gR<-ggplot(df, aes(x,y)) + geom_line() + geom_ribbon(aes(ymin=0, ymax=y, fill=qu
                    plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
                    legend.position="none",
                    panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+
-  annotate(geom="label",x=0, y=0.04, label="R = [15,34]", size=3, vjust=1, hjust=0, fill="cyan")+
-  annotate(geom="label",x=30, y=0.04, label="R = [35,53]", size=3, vjust=1, hjust=0,fill="lightsteelblue1")+
-annotate(geom="label",x=60, y=0.04, label="R = [54,89]", size=3, vjust=1, hjust=0,fill="dodgerblue")+
-  annotate(geom="text",x=40, y=0.03, label="n = 1754 communities", size=4, vjust=1, hjust=0)
+  annotate(geom="label",x=0, y=0.03, label="R = [15,28]", size=3, vjust=1, hjust=0, fill="cyan")+
+  annotate(geom="label",x=30, y=0.03, label="R = [29,50]", size=3, vjust=1, hjust=0,fill="lightsteelblue1")+
+annotate(geom="label",x=60, y=0.03, label="R = [51,88]", size=3, vjust=1, hjust=0,fill="dodgerblue")+
+  annotate(geom="text",x=10, y=0.035, label="n = 1694 communities", size=4, vjust=1, hjust=0)
 
 gRho<-ggplot() + 
     geom_density(data=sm_all, aes(x=avg_cor_btw_yr),fill="orange", alpha=0.4, adjust=1) + 
@@ -119,12 +119,12 @@ gz_rho<-ggplot(sm_all, aes(x = avg_cor_btw_yr, y = TLslope.z)) +
 
 
 
-gR<-gR+annotate(geom="text",x=90, y=0.04, label="A", size=7, vjust=1, hjust=0,fill="dodgerblue")
+gR<-gR+annotate(geom="text",x=90, y=0.035, label="A", size=7, vjust=1, hjust=0,fill="dodgerblue")
 gz_rho<-gz_rho+annotate(geom="text",x=0.85, y=4, label="B", size=7, vjust=1, hjust=0,fill="dodgerblue")
 gz_VR<-gz_VR+annotate(geom="text",x=0.95, y=3.5, label="C", size=7, vjust=1, hjust=0,fill="dodgerblue")
 gz_TA_R<-gz_TA_R+annotate(geom="text",x=0.01, y=3.5, label="D", size=7, vjust=1, hjust=0,fill="dodgerblue")
 
-pdf("../../Results/Prelim_res_plot/test_empirical_z_taildep.pdf", width = 7, height = 7)
+pdf("../../Results/Prelim_res_plot/test_empirical_z_taildep.pdf", width = 8, height = 7)
 grid.arrange(gR,gz_rho,
              gz_VR,gz_TA_R,nrow = 2)
 dev.off()

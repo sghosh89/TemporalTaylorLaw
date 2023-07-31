@@ -22,6 +22,7 @@ sm_swisslake_zoo<-readRDS("../../Results/for_swisslake/stability_and_TL_est_swis
 all(colnames(sm_BioTIME)==colnames(sm_swisslake_zoo))==T
 #------------------------------- for insectRoel ----------------------------------------------
 sm_insect<-readRDS("../../Results/for_insectRoel/stability_and_TL_est_insect.RDS")
+sm_insect<-sm_insect%>%filter(STUDY_ID!=478) # as it is already included in BioTIME
 all(colnames(sm_BioTIME)==colnames(sm_insect))==T
 #-------- bind together -------------
 sm_all<-rbind(sm_BioTIME,sm_BioTIMEx,sm_BBS,sm_RF,sm_swisslake_phyto,sm_swisslake_zoo,sm_insect)
@@ -41,24 +42,20 @@ checktab1<-sm_all%>%group_by(source,STUDY_ID)%>%summarise(nsites=n_distinct(news
                                                           nuq_stab=n_distinct(stability))%>%ungroup()
 # In the above table, whenever you find nsites!=nuq_stab, there are some duplicated sites
 duplicated_tab<-checktab1%>%filter(nsites!=nuq_stab)
+# no duplicates
 
 # So, we need to choose only any one site for a given STUDY_ID
 sm_all_good<-sm_all%>%filter(STUDY_ID%notin%duplicated_tab$STUDY_ID)
-sm_all_bad<-sm_all%>%filter(STUDY_ID%in%duplicated_tab$STUDY_ID)
-sm_all_good2<-sm_all_bad%>%distinct(STUDY_ID,.keep_all = T)# distinct function always choose the first row
-
-sm_all_good<-rbind(sm_all_good,sm_all_good2)
-sm_all_good<-sm_all_good%>%arrange(source)#1722 observations in total
 
 saveRDS(sm_all_good,"../../Results/gather_res/TaylorEstimate_alldata.RDS")
 
-# total 1754 data
+# total 1694 data
 #-------------------------------------------------------------------
 table(sm_all_good$REALM) # 110 freshwater, 1644 terrestrial
 #------------------------ NOW DO PLOTTING ----------------------------------------
 # first histogram of taylor's slope by REALM
-range(sm_all_good$TLslope.z) # 0.529 to 3.5075759
-# 1754 community data
+range(sm_all_good$TLslope.z) # 0.9 to 3.5075759
+# 1694 community data
 
 br <- c(0,1,2,3,4)
 # for terrestrial
