@@ -1,5 +1,6 @@
 rm(list=ls()) 
 library(tidyverse)
+library(gridExtra)
 library(ggpubr)
 #==========================
 sm_all<-readRDS("../../Results/gather_res/TaylorEstimate_alldata.RDS")
@@ -119,10 +120,10 @@ gz_rho<-ggplot(sm_all, aes(x = avg_cor_btw_yr, y = TLslope.z)) +
 
 
 
-gR<-gR+annotate(geom="text",x=90, y=0.035, label="A", size=7, vjust=1, hjust=0,fill="dodgerblue")
-gz_rho<-gz_rho+annotate(geom="text",x=0.85, y=4, label="B", size=7, vjust=1, hjust=0,fill="dodgerblue")
-gz_VR<-gz_VR+annotate(geom="text",x=0.95, y=3.5, label="C", size=7, vjust=1, hjust=0,fill="dodgerblue")
-gz_TA_R<-gz_TA_R+annotate(geom="text",x=0.01, y=3.5, label="D", size=7, vjust=1, hjust=0,fill="dodgerblue")
+gR<-gR+annotate(geom="text",x=90, y=0.035, label="A", size=7, vjust=1, hjust=0)
+gz_rho<-gz_rho+annotate(geom="text",x=0.85, y=4, label="B", size=7, vjust=1, hjust=0)
+gz_VR<-gz_VR+annotate(geom="text",x=0.95, y=3.5, label="C", size=7, vjust=1, hjust=0)
+gz_TA_R<-gz_TA_R+annotate(geom="text",x=0.01, y=3.5, label="D", size=7, vjust=1, hjust=0)
 
 pdf("../../Results/Prelim_res_plot/test_empirical_z_taildep.pdf", width = 8, height = 7)
 grid.arrange(gR,gz_rho,
