@@ -14,8 +14,8 @@ Affiliations:
 
 About:
 	This repository records the complete workflow that produced the analysis from the data. 
-	Each folder contains a "README.txt" to guide through the repository. We used the data which are already publicly available.
-	(url: https://doi.org/10.5281/zenodo.8233591).  
+	Each folder contains a "README.txt" to guide through the repository. We used the data which are already 
+	publicly available (url: https://doi.org/10.5281/zenodo.8233591).  
 	The core software dependency is R (R Core Team, 2022. R: A language and environment for statistical computing. 
 	R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.). 
 	Codes are written and performed by Ghosh with R version 4.2.1 on a windows 10 laptop. This repository is intended
