@@ -7,12 +7,6 @@ if(!dir.exists("../../Results/gather_res/")){
   dir.create("../../Results/gather_res/")
 }
 
-#source("Taylor.R") # gather all TL estimates and 
-# play with exploratory data visualization by realm
-
-#source("generate_com.R") # simulation shows stability vs. nsp plot (Cottingham)
-#source("synchrony_and_z.R") # extra
-
 # for figures
 source("conceptual_figs.R")
 source("Taylor_all_visualization.R") # considering both realm altogether
