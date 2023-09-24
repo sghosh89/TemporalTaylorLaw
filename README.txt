@@ -24,5 +24,5 @@ About:
 
 Funding and acknowledgement:
 
-	SG was supported by funding from UZH. BM was supported by funding from Eawag. 
-	We would like to thank Dr. Carlos Melian for the helpful discussions about Taylor's law.
+	SG was supported by funding from UZH. BM was supported by funding from Eawag, SNF (grant no. 310030-207910), 
+	and ETH Board (blue-green biodiversity initiative). We would like to thank Dr. Carlos Melian for the helpful discussions about Taylor’s law.
