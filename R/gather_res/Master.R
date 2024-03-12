@@ -9,6 +9,7 @@ if(!dir.exists("../../Results/gather_res/")){
 
 # for figures
 source("conceptual_figs.R")
+source("fig_with_interaction.R")
 source("Taylor_all_visualization.R") # considering both realm altogether
 source("test_empirical_z_taildep.R") # test with real data
 source("Simulation_zmorethan2.R") # new mechanism for z>2
