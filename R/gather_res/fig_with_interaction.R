@@ -35,7 +35,7 @@ gen_com_stab_w_interaction<-function(nyr=100, nsp=70, a=0.01, mu, z, rho_mean){
   idmat<-which(upper.tri(sigma2)==1,arr.ind = T)
   idmat<-as.data.frame(idmat)
   
-  rho_ij<-rnorm(n=(lenmu^2-lenmu)*0.5,mean=rho_mean,sd=0.01)
+  rho_ij<-rnorm(n=(lenmu^2-lenmu)*0.5,mean=rho_mean,sd=0.001)
   #hist(rho_ij)
   
   for(i in 1:nrow(idmat)){
@@ -137,7 +137,7 @@ g1<-ggplot(data=resg, aes(x=z,y=icv,col=as.factor(Richness)))+
   theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
-  theme(legend.position = "top")+
+  theme(legend.position =c(0.8,0.2))+
   facet_wrap(~rho, scales="free", labeller = label_both)
 g1
 
@@ -154,7 +154,7 @@ g2<-ggplot(data=resg, aes(x=z,y=pe.avg.cv,col=as.factor(Richness)))+
   theme(text = element_text(size = 14),axis.text = element_text(size = 14),
         plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
         panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
-  theme(legend.position = "top")+
+  theme(legend.position =c(0.8,0.2))+
   #facet_grid(Richness~rho, labeller = label_both)
   facet_wrap(~rho, scales="free", labeller = label_both)
 g2
