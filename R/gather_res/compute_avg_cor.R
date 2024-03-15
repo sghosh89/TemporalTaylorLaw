@@ -21,6 +21,8 @@ compute_avg_cor<-function(mat){
   cormat[cormat.p.nonsig]<-NA # so keeping only sig +ve or -ve cor between columns
   cormat[upper.tri(cormat,diag=T)] <- NA # only lower triangular part
   
+  avg_cor_btw_sp<-mean(cormat,na.rm=T)
+  
   id<-which(cormat>0, arr.ind = TRUE)
   if(nrow(id)>0){
     avg_cor_positive<-mean(cormat[id],na.rm = T) 
@@ -49,7 +51,8 @@ compute_avg_cor<-function(mat){
     avg_cor_btw_yr<-NA # only 4 species were not enough to estimate correlation
   }
   
-  res<-data.frame(avg_cor_pos_btw_sp=avg_cor_positive,
+  res<-data.frame(avg_cor_btw_sp=avg_cor_btw_sp,
+                  avg_cor_pos_btw_sp=avg_cor_positive,
             avg_cor_neg_btw_sp=avg_cor_negative,
             avg_cor_btw_yr=avg_cor_btw_yr)
   return(res)

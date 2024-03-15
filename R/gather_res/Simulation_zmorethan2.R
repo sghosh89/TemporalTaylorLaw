@@ -21,19 +21,19 @@ marg_to_cop_trans<-function(x){ #transforms to copula space
 
 #***constants
 N<-22 #length of time series
-n<-40 #number of sp
-numdat<-1000 #the number of datasets to get from the normal copula
+n<-40 #number of sp = R
+numdat<-1000 #the number of surrogates
 
-rholist<-c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9) #normal-copula parameter for dependence between locations
-#this is a covariance, see below call to rmvnorm
-m_list <- vector(mode = "list", length = length(rholist)) # holds each array in each space
-names(m_list)<-paste("rho_",rholist,sep="") # for Normal copula
+rlist<-c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9) #normal-copula parameter for dependence between years
+
+m_list <- vector(mode = "list", length = length(rlist)) # holds each array in each space
+names(m_list)<-paste("r_",rlist,sep="") # for Normal copula
 C_list<-SC_list<-m_list # for Clayton and Survival Clayton
-for(k in 1:length(rholist)){
-  rho<-rholist[k]
+for(k in 1:length(rlist)){
+  r<-rlist[k]
   #***generate the starting data, which has normal copula structure
   #because it comes originally from a multivariate normal, before transformation
-  sig<-matrix(rho,N,N)
+  sig<-matrix(r,N,N)
   diag(sig)<-1
   m<-rmvnorm(n*numdat,mean=rep(0,N),sigma=sig) # each column of m has normal histogram
   
@@ -57,14 +57,11 @@ for(k in 1:length(rholist)){
   
   #***surrogates using a Clayton copula, spearman preserving
   #get the Clayton parameter to use
-  ncop<-normalCopula(rho,2)
+  ncop<-normalCopula(r,2)
   
   ccop<-claytonCopula(2,2)
   cparam<-iRho(ccop,rho(ncop))
   ccop<-claytonCopula(cparam,N)
-  
-  #nparam<-iRho(ncop,rho(ncop))
-  #ncop<-normalCopula(nparam,N)
   
   #generate the surrogates
   csurrog<-array(NA,dim(mg))
@@ -94,41 +91,41 @@ res<-list(Normalsurrogs=m_list,
           SCsurrogs=SC_list)
 saveRDS(res,paste("../../Results/gather_res/surrogates_nsp_",n,"_nyr_",N,".RDS",sep=""))
 
-z_N_rho<-matrix(NA,nrow=numdat,ncol=length(rholist))
-colnames(z_N_rho)<-paste("rho_",rholist,sep="")
-rownames(z_N_rho)<-paste("surrog_",1:numdat,sep="")
-z_C_rho<-z_SC_rho<-z_N_rho
-for(i in 1:length(rholist)){
+z_N_r<-matrix(NA,nrow=numdat,ncol=length(rlist))
+colnames(z_N_r)<-paste("r_",rlist,sep="")
+rownames(z_N_r)<-paste("surrog_",1:numdat,sep="")
+z_C_r<-z_SC_r<-z_N_r
+for(i in 1:length(rlist)){
   for(j in 1:numdat){
     res<-fit_taylor(m_list[[i]][,,j])
-    z_N_rho[j,i]<-res$z
+    z_N_r[j,i]<-res$z
     res2<-fit_taylor(C_list[[i]][,,j])
-    z_C_rho[j,i]<-res2$z
+    z_C_r[j,i]<-res2$z
     res3<-fit_taylor(SC_list[[i]][,,j])
-    z_SC_rho[j,i]<-res3$z
+    z_SC_r[j,i]<-res3$z
   }
 }
 
-zs_N<-apply(z_N_rho,FUN=mean,MARGIN=2)
-zs_C<-apply(z_C_rho,FUN=mean,MARGIN=2)
-zs_SC<-apply(z_SC_rho,FUN=mean,MARGIN=2)
+zs_N<-apply(z_N_r,FUN=mean,MARGIN=2)
+zs_C<-apply(z_C_r,FUN=mean,MARGIN=2)
+zs_SC<-apply(z_SC_r,FUN=mean,MARGIN=2)
 
-sd_zs_N<-apply(z_N_rho,FUN=sd,MARGIN=2)
-sd_zs_C<-apply(z_C_rho,FUN=sd,MARGIN=2)
-sd_zs_SC<-apply(z_SC_rho,FUN=sd,MARGIN=2)
+sd_zs_N<-apply(z_N_r,FUN=sd,MARGIN=2)
+sd_zs_C<-apply(z_C_r,FUN=sd,MARGIN=2)
+sd_zs_SC<-apply(z_SC_r,FUN=sd,MARGIN=2)
 
 # z vs. increasing synchrony between species 
 pdf(paste("../../Results/gather_res/z_vs_btwyr_cor_simulation_nsp_",n,"_nyr_",N,".pdf",sep=""),
     height=6,width=6)
-plot(rholist,zs_N,xlab="rho (Between year correlation)",ylab="z (N,C,SC)",type="b",lty=3,
+plot(rlist,zs_N,xlab="r (Between year correlation)",ylab="z (N,C,SC)",type="b",lty=3,
      ylim=c(-1,4),xlim=c(0,1),pch=16)
-arrows(x0=rholist, y0=zs_N-sd_zs_N, x1=rholist, y1=zs_N+sd_zs_N, 
+arrows(x0=rlist, y0=zs_N-sd_zs_N, x1=rlist, y1=zs_N+sd_zs_N, 
        code=3, angle=90, length=0.05)
-lines(rholist,zs_C,pch=16,col="red",type="b",lty=3)
-arrows(x0=rholist, y0=zs_C-sd_zs_C, x1=rholist, y1=zs_C+sd_zs_C, 
+lines(rlist,zs_C,pch=16,col="red",type="b",lty=3)
+arrows(x0=rlist, y0=zs_C-sd_zs_C, x1=rlist, y1=zs_C+sd_zs_C, 
        code=3, angle=90, length=0.05,col="red")
-lines(rholist,zs_SC,pch=16,col="blue",type="b",lty=3)
-arrows(x0=rholist, y0=zs_SC-sd_zs_SC, x1=rholist, y1=zs_SC+sd_zs_SC, 
+lines(rlist,zs_SC,pch=16,col="blue",type="b",lty=3)
+arrows(x0=rlist, y0=zs_SC-sd_zs_SC, x1=rlist, y1=zs_SC+sd_zs_SC, 
        code=3, angle=90, length=0.05,col="blue")
 dev.off()
 # just check
@@ -139,16 +136,18 @@ dev.off()
 # pairwise Spearman correlations between columns (species)
 source("compute_avg_cor.R")
 
-avg_cor_posmat_N<-matrix(NA,nrow=numdat,ncol=length(rholist))
-colnames(avg_cor_posmat_N)<-paste("rho_",rholist,sep="")
+avg_cor_posmat_N<-matrix(NA,nrow=numdat,ncol=length(rlist))
+colnames(avg_cor_posmat_N)<-paste("r_",rlist,sep="")
 rownames(avg_cor_posmat_N)<-paste("surrog_",1:numdat,sep="")
+
 avg_cor_posmat_C<-avg_cor_posmat_SC<-avg_cor_posmat_N
+avg_cor_mat_C<-avg_cor_mat_SC<-avg_cor_mat_N<-avg_cor_posmat_N
 avg_cor_negmat_N<-avg_cor_negmat_C<-avg_cor_negmat_SC<-avg_cor_posmat_N
 vr_LdM_N<-vr_LdM_C<-vr_LdM_SC<-avg_cor_posmat_N
 # this is not needed, just to check
 avg_cor_btwyr_N<-avg_cor_btwyr_C<-avg_cor_btwyr_SC<-avg_cor_posmat_N
 
-for(i in 1:length(rholist)){
+for(i in 1:length(rlist)){
   for(j in 1:numdat){
     x1<-m_list[[i]][,,j]
     x2<-C_list[[i]][,,j]
@@ -160,6 +159,10 @@ for(i in 1:length(rholist)){
     vr_LdM_N[j,i]<-ecofolio::synchrony(x1)
     vr_LdM_C[j,i]<-ecofolio::synchrony(x2)
     vr_LdM_SC[j,i]<-ecofolio::synchrony(x3)
+    
+    avg_cor_mat_N[j,i]<-res1$avg_cor_btw_sp
+    avg_cor_mat_C[j,i]<-res2$avg_cor_btw_sp
+    avg_cor_mat_SC[j,i]<-res3$avg_cor_btw_sp
     
     avg_cor_posmat_N[j,i]<-res1$avg_cor_pos_btw_sp
     avg_cor_posmat_C[j,i]<-res2$avg_cor_pos_btw_sp
@@ -175,11 +178,14 @@ for(i in 1:length(rholist)){
   }
 }
 
-avg_cor_negmat_N[is.na(avg_cor_negmat_N)]<-0
-avg_cor_negmat_C[is.na(avg_cor_negmat_C)]<-0
-avg_cor_negmat_SC[is.na(avg_cor_negmat_SC)]<-0
+#avg_cor_negmat_N[is.na(avg_cor_negmat_N)]<-0
+#avg_cor_negmat_C[is.na(avg_cor_negmat_C)]<-0
+#avg_cor_negmat_SC[is.na(avg_cor_negmat_SC)]<-0
 
-avg_cor_matlist<-list(avg_cor_posmat_N=avg_cor_posmat_N,
+avg_cor_matlist<-list(avg_cor_mat_N=avg_cor_mat_N,
+                      avg_cor_mat_C=avg_cor_mat_C,
+                      avg_cor_mat_SC=avg_cor_mat_SC,
+                      avg_cor_posmat_N=avg_cor_posmat_N,
                       avg_cor_posmat_C=avg_cor_posmat_C,
                       avg_cor_posmat_SC=avg_cor_posmat_SC,
                       avg_cor_negmat_N=avg_cor_negmat_N,
@@ -194,18 +200,10 @@ avg_cor_matlist<-list(avg_cor_posmat_N=avg_cor_posmat_N,
 saveRDS(avg_cor_matlist,paste(
   "../../Results/gather_res/avg_cor_matlist_nsp_",n,"_nyr_",N,".RDS",sep=""))
 
-x1<-avg_cor_matlist$avg_cor_posmat_N
-x2<-avg_cor_matlist$avg_cor_negmat_N
-#range(x2)
-r1<-abs(x2)/x1 # ratio of avg negative cor and positive cor 
-
-x3<-avg_cor_matlist$avg_cor_posmat_C
-x4<-avg_cor_matlist$avg_cor_negmat_C
-r2<-abs(x4)/x3
-
-x5<-avg_cor_matlist$avg_cor_posmat_SC
-x6<-avg_cor_matlist$avg_cor_negmat_SC
-r3<-abs(x6)/x5
+#------------ plot avg correlation between sp.-------------------
+r1<-avg_cor_matlist$avg_cor_mat_N
+r2<-avg_cor_matlist$avg_cor_mat_C
+r3<-avg_cor_matlist$avg_cor_mat_SC
 
 d1<-r1 %>% as.data.frame()%>%gather() 
 d2<-r2 %>% as.data.frame()%>%gather()
@@ -214,14 +212,18 @@ d3<-r3 %>% as.data.frame()%>%gather()
 g1<-ggplot(d1, aes(value)) + 
   geom_density() + 
   facet_wrap(~key)+
-  xlab("|Avg. pairwise asynchrony| / Avg. pairwise synchrony between species")+
+  xlab("Average correlation between species")+
   geom_density(data=d3,aes(value),col="blue",linetype="dotted",size=0.8)+
   geom_density(data=d2,aes(value),col="red",linetype="dashed")+
   theme_classic()
+
 ggsave(g1, 
-       filename = paste("../../Results/gather_res/asyn_vs_syn_btw_sp_at_different_rho_nsp_",n,"_nyr_",N,".pdf",sep=""),
+       filename = paste("../../Results/gather_res/avg_cor_btw_sp_at_different_r_nsp_",n,"_nyr_",N,".pdf",sep=""),
        device = cairo_pdf, 
-       width = 15, height = 6, units = "cm")
+       width = 15, height = 10, units = "cm")
+
+
+# for LM synchrony
 
 r1<-avg_cor_matlist$vr_LdM_N
 r2<-avg_cor_matlist$vr_LdM_C
@@ -239,9 +241,9 @@ g1<-ggplot(d1, aes(value)) +
   geom_density(data=d2,aes(value),col="red",linetype="dashed")+
   theme_classic()
 ggsave(g1, 
-       filename = paste("../../Results/gather_res/vr_LdM_at_different_rho_nsp_",n,"_nyr_",N,".pdf",sep=""),
+       filename = paste("../../Results/gather_res/vr_LdM_at_different_r_nsp_",n,"_nyr_",N,".pdf",sep=""),
        device = cairo_pdf, 
-       width = 15, height = 6, units = "cm")
+       width = 15, height = 10, units = "cm")
 
 
 

@@ -85,7 +85,10 @@ ggplot(data=res2,aes(x=z,y=zfit))+geom_point()+geom_abline(slope=1,intercept=0)
 
 
 # plot stability vs z for different richness
-g1<-ggplot(data=res, aes(x=z,y=icv,col=as.factor(nsp)))+geom_smooth(se=F)+
+g1<-ggplot(data=res, aes(x=z,y=icv,col=as.factor(nsp)))+
+  #geom_point()+
+  #geom_line()+
+  geom_smooth(se=F)+
   xlab("Taylor's law slope, z")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_colour_brewer("Richness",palette = "Set2")+
