@@ -79,7 +79,7 @@ gen_com_stab_w_interaction<-function(nyr=100, nsp=70, a=0.01, mu, z, rho_mean){
 }
 
 # now generate data for CV vs. nsp for different z
-nrep<-50 # 
+nrep<-1000 # 
 nyr<-100
 z_all<-seq(from=1.5,to=2.5,by=0.1)
 nsplist<-c(30,50,70) # vary nsp 
@@ -133,6 +133,7 @@ resg<-res%>%filter(i%notin%badid)
 #======================
 
 saveRDS(resg, "../../Results/Prelim_res_plot/data_for_conceptual_fig2_with_interaction.RDS")
+
 #dd<-resg%>%group_by(Richness,z,rho)%>%summarise(mnicv=mean(icv))
 #ggplot(data=dd, aes(x=z,y=mnicv,col=as.factor(Richness)))+
 #  geom_point()+
@@ -141,7 +142,7 @@ saveRDS(resg, "../../Results/Prelim_res_plot/data_for_conceptual_fig2_with_inter
 
 g1<-ggplot(data=resg, aes(x=z,y=icv,col=as.factor(Richness)))+
   #geom_point()+
-  geom_smooth(se=F)+
+  geom_smooth(method="loess", se=F)+
   xlab("Taylor's law slope, z")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_colour_brewer("Richness",palette = "Set2")+
@@ -155,7 +156,7 @@ g1
 
 g1inset<-ggplot(data=resg, aes(x=Richness,y=icv,col=as.factor(z)))+
   #geom_point()+
-  geom_smooth(se=F)+
+  geom_smooth(method="loess",se=F)+
   xlab("Richness, R")+ylab("Stability (=1/CV)")+
   theme_bw()+
   scale_colour_brewer("z",palette = "RdYlBu", direction=-1)+
@@ -169,12 +170,12 @@ g1inset
 
 g2<-ggplot(data=resg, aes(x=z,y=pe.avg.cv,col=as.factor(Richness)))+
   #geom_point()+geom_line()+
-  geom_smooth(se=F)+
+  geom_smooth(method="loess", se=F)+
   xlab("Taylor's law slope, z")+ylab("Portfolio effect, PE")+
   geom_vline(xintercept = 2, linetype="dotted", col="gray40")+
   theme_bw()+
   #geom_point(aes(y=pe.mv), pch=1)+geom_line(aes(y=pe.mv),linetype = "dashed")+
-  geom_smooth(aes(y=pe.mv),linetype = "dashed",se=F)+
+  geom_smooth(method="loess", aes(y=pe.mv),linetype = "dashed",se=F)+
   scale_colour_brewer("Richness",palette = "Set2")+
   #scale_color_manual("Richness",values=c("#66C2A5","#8DA0CB"))+
   theme(text = element_text(size = 14),axis.text = element_text(size = 14),
@@ -197,5 +198,34 @@ dev.off()
 pdf("../../Results/Prelim_res_plot/conceptual_fig2PE_with_interaction.pdf", width = 10, height = 6)
 g2
 dev.off()
+
+#===========================
+library(tidybayes)
+#library(ggdist)
+resg<-readRDS("../../Results/Prelim_res_plot/data_for_conceptual_fig2_with_interaction.RDS")
+resg$diffPEs<-resg$pe.avg.cv-resg$pe.mv
+
+resg<-resg%>%filter(z%in%c(1.9, 2.0,2.1))
+g2extra<-ggplot(resg, aes(x=diffPEs, fill=as.factor(Richness)))+
+  geom_histogram(alpha=0.4)+
+ stat_pointinterval(aes(col=as.factor(Richness), alpha=0.6), .width = c(0.95))+
+  theme_bw()+
+  scale_colour_brewer("Richness",palette = "Set2")+
+  scale_fill_brewer("Richness",palette = "Set2")+
+  theme(text = element_text(size = 13),axis.text = element_text(size = 13),
+        plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+        panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
+  theme(legend.position ="top")+
+  geom_vline(xintercept = 0, linetype="dotted", col="gray40")+
+  facet_grid(z~rho,scales="free", labeller = label_both)+
+  xlab("PE_avgCV - PE_mv")+ylab("Count")
+
+pdf("../../Results/Prelim_res_plot/conceptual_fig2PE_with_interaction_extra.pdf", width = 9, height = 5)
+g2extra
+dev.off()
+
+#dd<-resg%>%filter(z==1.9 & rho==-0.4 & Richness==30)
+#summary(dd$diffPEs)
+#diff(quantile(dd$diffPEs, probs=c(0.025,0.975)))
 
 
