@@ -84,7 +84,7 @@ nyr<-100
 z_all<-seq(from=1.5,to=2.5,by=0.1)
 nsplist<-c(30,50,70) # vary nsp 
 seedlist<-c(123:(nrep+122))
-#nsplist<-c(70)
+
 rholist<-seq(from=-0.8,to=0.8,by=0.4)
 lendf<-length(z_all)*length(nsplist)*length(rholist)*length(seedlist)
 res<-data.frame(z=NA*numeric(lendf),
@@ -206,7 +206,7 @@ resg<-readRDS("../../Results/Prelim_res_plot/data_for_conceptual_fig2_with_inter
 resg$diffPEs<-resg$pe.avg.cv-resg$pe.mv
 
 resg<-resg%>%filter(z%in%c(1.9, 2.0,2.1))
-g2extra<-ggplot(resg, aes(x=diffPEs, fill=as.factor(Richness)))+
+ggplot(resg, aes(x=diffPEs, fill=as.factor(Richness)))+
   geom_histogram(alpha=0.4)+
  stat_pointinterval(aes(col=as.factor(Richness), alpha=0.6), .width = c(0.95))+
   theme_bw()+
@@ -220,12 +220,30 @@ g2extra<-ggplot(resg, aes(x=diffPEs, fill=as.factor(Richness)))+
   facet_grid(z~rho,scales="free", labeller = label_both)+
   xlab("PE_avgCV - PE_mv")+ylab("Count")
 
-pdf("../../Results/Prelim_res_plot/conceptual_fig2PE_with_interaction_extra.pdf", width = 9, height = 5)
+
+resg$Richness<-as.factor(resg$Richness)
+g2extra<-ggplot(resg, aes(x=diffPEs, y=Richness, fill=as.factor(Richness)))+
+  #geom_histogram(alpha=0.4)+
+  stat_pointinterval(aes(col=as.factor(Richness), alpha=0.8), size=1.5,
+                     point_interval = mean_qi,.width = c(0.95))+
+  theme_bw()+
+  scale_colour_brewer("Richness",palette = "Set2")+
+  scale_fill_brewer("Richness",palette = "Set2")+
+  theme(text = element_text(size = 13),axis.text = element_text(size = 13),
+        plot.margin = margin(t = 8, r = 9, b = 4, l = 4, unit = "pt"),
+        panel.grid = element_line(color = rgb(235, 235, 235, 100, maxColorValue = 255)))+ 
+  theme(legend.position ="none")+
+  geom_vline(xintercept = 0, linetype="dotted", col="gray40")+
+  facet_grid(z~rho,labeller = label_both)+
+  xlab("PE_avgCV - PE_mv")+ylab("Richness")
+
+
+pdf("../../Results/Prelim_res_plot/conceptual_fig2PE_with_interaction_extra.pdf", width =8, height = 5)
 g2extra
 dev.off()
 
 #dd<-resg%>%filter(z==1.9 & rho==-0.4 & Richness==30)
 #summary(dd$diffPEs)
 #diff(quantile(dd$diffPEs, probs=c(0.025,0.975)))
-
-
+xx<-resg%>%group_by(Richness, z, rho)%>%median_qi()
+yy<-xx%>%filter(diffPEs.lower*diffPEs.upper <0)
