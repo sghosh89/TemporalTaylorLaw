@@ -6,7 +6,7 @@ Authors: Shyamolina Ghosh (1*), Blake Matthews (2)
  
 
 Affiliations:
-1. Department of Evolutionary Biology and Environmental studies, University of Zurich; Winterthurerstrasse 190, 8057 Zurich, Switzerland
+1. Department of Evolutionary Biology and Environmental Studies, University of Zurich; Winterthurerstrasse 190, 8057 Zurich, Switzerland
 2. Department of Fish Ecology and Evolution, Eawag, Swiss Federal Institute of Aquatic Science and Technology; Seestrasse 79, Kastanienbaum, 6047 Switzerland
 
 *Corresponding author: Shyamolina Ghosh (ghoshshyamolina89@gmail.com) 
