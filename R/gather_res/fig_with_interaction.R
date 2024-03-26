@@ -4,6 +4,7 @@ rm(list=ls())
 #install_github("seananderson/ecofolio")
 #-------------
 set.seed(seed=123)
+library(tidyverse)
 library(ecofolio)
 library(adiv)
 library(ggplot2)
@@ -235,7 +236,7 @@ g2extra<-ggplot(resg, aes(x=diffPEs, y=Richness, fill=as.factor(Richness)))+
   theme(legend.position ="none")+
   geom_vline(xintercept = 0, linetype="dotted", col="gray40")+
   facet_grid(z~rho,labeller = label_both)+
-  xlab("PE_avgCV - PE_mv")+ylab("Richness")
+  xlab("PE_avgCV - PE_mv")+ylab("Richness, R")
 
 
 pdf("../../Results/Prelim_res_plot/conceptual_fig2PE_with_interaction_extra.pdf", width =8, height = 5)
